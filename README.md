@@ -2,7 +2,7 @@
 
 A modern, visually stunning artist portfolio and e-commerce website built with Next.js, TypeScript, and Tailwind CSS. This project provides a complete solution for artists to showcase and sell their work online.
 
-![Moon Doggy Artist Portfolio](public/images/artist/MoonDoggy_Pfp.jpg)
+![Moon Doggy Artist Portfolio](public/images/artworks/img1.jpg)
 
 ## 📋 Table of Contents
 
