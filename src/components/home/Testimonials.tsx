@@ -1,7 +1,7 @@
 // src/components/home/Testimonials.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { Quote, X } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/Card';
@@ -62,6 +62,68 @@ function TestimonialCard({ testimonial, onReadMore }: TestimonialCardProps) {
 
 export default function Testimonials() {
   const [selectedTestimonial, setSelectedTestimonial] = useState<Testimonial | null>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  // Set isClient to true on mount
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Memoize the duplicated arrays to ensure consistency
+  const { firstRow, secondRow } = useMemo(() => {
+    // First row data
+    const firstSet = testimonials.map((t, i) => ({
+      ...t,
+      uniqueId: `row1-set1-${t.id}-${i}`
+    }));
+    const firstSetDuplicate = testimonials.map((t, i) => ({
+      ...t,
+      uniqueId: `row1-set2-${t.id}-${i}`
+    }));
+
+    // Second row data (reversed)
+    const secondSet = [...testimonials].reverse().map((t, i) => ({
+      ...t,
+      uniqueId: `row2-set1-${t.id}-${i}`
+    }));
+    const secondSetDuplicate = [...testimonials].reverse().map((t, i) => ({
+      ...t,
+      uniqueId: `row2-set2-${t.id}-${i}`
+    }));
+
+    return {
+      firstRow: [...firstSet, ...firstSetDuplicate],
+      secondRow: [...secondSet, ...secondSetDuplicate]
+    };
+  }, []);
+
+  // Don't render the marquee until we're on the client
+  if (!isClient) {
+    return (
+      <section className="py-20 bg-gradient-to-br from-white via-purple-50 to-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-4">
+              Collector Stories
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Hear from art enthusiasts who have added our pieces to their collections,
+              sharing their experiences and stories.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {testimonials.slice(0, 3).map((testimonial) => (
+              <TestimonialCard
+                key={testimonial.id}
+                testimonial={testimonial}
+                onReadMore={setSelectedTestimonial}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
  
   return (
     <section className="py-20 bg-gradient-to-br from-white via-purple-50 to-white overflow-hidden">
@@ -80,9 +142,9 @@ export default function Testimonials() {
         <div className="relative">
           {/* First Row */}
           <div className="flex animate-marquee">
-            {[...testimonials, ...testimonials].map((testimonial, index) => (
+            {firstRow.map((testimonial) => (
               <div
-                key={`${testimonial.id}-${index}`}
+                key={testimonial.uniqueId}
                 className="w-[400px] flex-shrink-0 px-4"
               >
                 <TestimonialCard 
@@ -95,9 +157,9 @@ export default function Testimonials() {
 
           {/* Second Row (Reverse Direction) */}
           <div className="flex animate-marquee-reverse mt-8">
-            {[...testimonials.reverse(), ...testimonials].map((testimonial, index) => (
+            {secondRow.map((testimonial) => (
               <div
-                key={`${testimonial.id}-reverse-${index}`}
+                key={testimonial.uniqueId}
                 className="w-[400px] flex-shrink-0 px-4"
               >
                 <TestimonialCard 

@@ -15,10 +15,11 @@ export class CartManager {
   }
 
   constructor() {
-    if (typeof window !== 'undefined') {
-      this.loadFromStorage();
-    }
+  if (typeof window !== 'undefined') {
+    // Add a small delay to ensure hydration is complete
+    setTimeout(() => this.loadFromStorage(), 100);
   }
+}
 
   subscribe(listener: (cart: Cart) => void) {
     this.listeners.push(listener);

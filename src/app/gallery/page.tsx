@@ -4,14 +4,14 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Search, Filter, Grid, Maximize2 } from 'lucide-react';
+import { Search, Filter, Maximize2 } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Modal from '@/components/ui/Modal';
 import { Card } from '@/components/ui/Card';
 import { sampleArtworks } from '@/lib/data';
 import { ArtCategory, Artwork } from '@/lib/types';
-import { capitalizeFirst } from '@/lib/utils';
+import { capitalizeFirst, formatPrice } from '@/lib/utils';
 
 export default function GalleryPage() {
   const [searchTerm, setSearchTerm] = useState('');

@@ -1,5 +1,4 @@
 import { GiftCardTemplate } from '@/lib/types';
-import { formatPrice } from '@/lib/utils';
 
 interface GiftCardPreviewProps {
   template: GiftCardTemplate | null;

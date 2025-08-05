@@ -2,12 +2,14 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Heart, ShoppingCart, Eye } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { Artwork } from '@/lib/types';
 import { formatPrice } from '@/lib/utils';
 import { useCart } from '@/hooks/useCart';
+import { useWishlist } from '@/hooks/useWishlist';
 
 interface ProductCardProps {
   artwork: Artwork;
@@ -16,7 +18,9 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ artwork, viewMode, index }: ProductCardProps) {
+  const router = useRouter();
   const { addToCart } = useCart();
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -63,12 +67,34 @@ export default function ProductCard({ artwork, viewMode, index }: ProductCardPro
                   <ShoppingCart className="h-4 w-4 mr-2" />
                   Add to Cart
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    router.push(`/shop/${artwork.id}`);
+                  }}
+                >
                   <Eye className="h-4 w-4 mr-2" />
                   Quick View
                 </Button>
-                <Button variant="ghost" size="sm">
-                  <Heart className="h-4 w-4" />
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const liked = isInWishlist(artwork.id);
+                    if (liked) {
+                      removeFromWishlist(artwork.id);
+                    } else {
+                      addToWishlist(artwork);
+                    }
+                  }}
+                  className={isInWishlist(artwork.id) ? 'text-red-500' : ''}
+                >
+                  <Heart className={`h-4 w-4 ${isInWishlist(artwork.id) ? 'fill-current' : ''}`} />
                 </Button>
               </div>
             </CardContent>
@@ -99,11 +125,33 @@ export default function ProductCard({ artwork, viewMode, index }: ProductCardPro
             <Button size="sm" onClick={handleAddToCart}>
               <ShoppingCart className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="sm">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                router.push(`/shop/${artwork.id}`);
+              }}
+            >
               <Eye className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="sm">
-              <Heart className="h-4 w-4" />
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const liked = isInWishlist(artwork.id);
+                if (liked) {
+                  removeFromWishlist(artwork.id);
+                } else {
+                  addToWishlist(artwork);
+                }
+              }}
+              className={isInWishlist(artwork.id) ? 'text-red-500' : ''}
+            >
+              <Heart className={`h-4 w-4 ${isInWishlist(artwork.id) ? 'fill-current' : ''}`} />
             </Button>
           </div>
           
