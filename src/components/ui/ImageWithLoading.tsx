@@ -23,11 +23,17 @@ export default function ImageWithLoading({
   width,
   height,
   className,
-  priority,
+  priority = false,
   sizes
 }: ImageWithLoadingProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+
+  // Handle image loading error
+  const handleError = () => {
+    setIsLoading(false);
+    setHasError(true);
+  };
 
   if (hasError) {
     return (
@@ -38,14 +44,18 @@ export default function ImageWithLoading({
       )}>
         <div className="text-center text-gray-400">
           <span className="text-2xl mb-2 block">🖼️</span>
-          <p className="text-xs">Image unavailable</p>
+          <p className="text-xs">Unable to load image</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={cn("relative", fill ? "" : "", className)}>
+    <div className={cn(
+      "relative",
+      fill ? "w-full h-full" : "",
+      className
+    )}>
       {isLoading && (
         <div className={cn(
           "absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse",
@@ -59,14 +69,14 @@ export default function ImageWithLoading({
         src={src}
         alt={alt}
         fill={fill}
-        width={width}
-        height={height}
+        width={!fill ? width : undefined}
+        height={!fill ? height : undefined}
         className={cn(
-          "transition-opacity duration-300",
-          isLoading ? "opacity-0" : "opacity-100",
+          "duration-300 transition-all",
+          isLoading ? "scale-110 blur-sm" : "scale-100 blur-0",
           className
         )}
-        onLoad={() => setIsLoading(false)}
+        onLoadingComplete={() => setIsLoading(false)}
         onError={() => {
           setIsLoading(false);
           setHasError(true);

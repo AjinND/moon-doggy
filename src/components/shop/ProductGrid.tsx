@@ -1,14 +1,19 @@
 // src/components/shop/ProductGrid.tsx
 
+import Loading from '@/components/ui/Loading';
 import ProductCard from './ProductCard';
 import { Artwork } from '@/lib/types';
 
 interface ProductGridProps {
   artworks: Artwork[];
   viewMode: 'grid' | 'list';
+  loading?: boolean;
 }
 
-export default function ProductGrid({ artworks, viewMode }: ProductGridProps) {
+export default function ProductGrid({ artworks, viewMode, loading }: ProductGridProps) {
+  if (loading) {
+    return <Loading size="lg" text="Loading artworks..." />;
+  }
   if (artworks.length === 0) {
     return (
       <div className="text-center py-16">

@@ -1,41 +1,3 @@
-// import type { Metadata } from "next";
-// import { Geist, Geist_Mono } from "next/font/google";
-// import "./globals.css";
-// import { ToastProvider } from "@/components/ui/Toast";
-
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
-
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
-
-// export const metadata: Metadata = {
-//   title: "Moon Doggy Art Gallery",
-//   description: "Contemporary art gallery featuring unique artworks",
-// };
-
-// export default function RootLayout({
-//   children,
-// }: Readonly<{
-//   children: React.ReactNode;
-// }>) {
-//   return (
-//     <html lang="en">
-//       <body
-//         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-//       >
-//         {children}
-//       </body>
-//     </html>
-//   );
-// }
-
-
-
 // src/app/layout.tsx
 
 import { Inter, Playfair_Display } from 'next/font/google';
@@ -43,6 +5,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import './globals.css'; // Ensure global styles are imported
 import { ToastProvider } from "@/components/ui/Toast";
+import ErrorBoundary from '@/components/ui/ErrorBoundary';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -118,15 +81,17 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <body className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-stone-50 font-sans antialiased">
-        <ToastProvider>
-          <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1">
-              {children}
-            </main>
-            <Footer />
-          </div>
-        </ToastProvider>
+        <ErrorBoundary>
+          <ToastProvider>
+            <div className="flex min-h-screen flex-col">
+              <Header />
+              <main className="flex-1">
+                {children}
+              </main>
+              <Footer />
+            </div>
+          </ToastProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

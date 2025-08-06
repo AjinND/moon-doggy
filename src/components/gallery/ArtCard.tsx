@@ -1,13 +1,14 @@
 // src/components/gallery/ArtCard.tsx
 'use client';
 
-import Image from 'next/image';
 import { useState } from 'react';
 import { Heart, Share2, Maximize2, Info } from 'lucide-react';
 import { Artwork } from '@/lib/types';
 import { Card } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
+import ImageWithLoading from '@/components/ui/ImageWithLoading';
 import { formatPrice } from '@/lib/utils';
+import { resolveImagePath } from '@/lib/image';
 
 interface ArtCardProps {
   artwork: Artwork;
@@ -18,7 +19,6 @@ interface ArtCardProps {
 
 export default function ArtCard({ artwork, onExpand, onShare, index }: ArtCardProps) {
   const [isLiked, setIsLiked] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -50,23 +50,15 @@ export default function ArtCard({ artwork, onExpand, onShare, index }: ArtCardPr
       onClick={() => onExpand(artwork)}
     >
       <div className="relative aspect-square overflow-hidden">
-        {/* Loading placeholder */}
-        {!imageLoaded && (
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse" />
-        )}
-        
-        <Image
-          src={artwork.imageUrl}
+        <ImageWithLoading
+          src={resolveImagePath(artwork.imageUrl, artwork.images)}
           alt={artwork.title}
           fill
-          className={`object-cover transition-all duration-700 ${
-            imageLoaded 
-              ? 'group-hover:scale-110 opacity-100' 
-              : 'opacity-0 scale-105'
-          }`}
-          onLoad={() => setImageLoaded(true)}
+          className="object-cover transition-transform duration-700 group-hover:scale-110"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          priority={index < 4} // Prioritize loading first 4 images
         />
-        
+
         {/* Overlay gradient */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         
