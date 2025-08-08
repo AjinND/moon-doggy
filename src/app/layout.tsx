@@ -22,24 +22,24 @@ const playfair = Playfair_Display({
 
 export const metadata = {
   title: {
-    default: 'Elena Vasquez Art | Contemporary Artist Portfolio',
-    template: '%s | Elena Vasquez Art'
+    default: 'Moon Doggy | Contemporary Artist Portfolio',
+    template: '%s | Laura Jurkowski Art'
   },
-  description: 'Discover contemporary artworks by Elena Vasquez. Original paintings, sculptures, and digital art available for purchase. Based in Barcelona, Spain.',
-  keywords: ['contemporary art', 'paintings', 'sculptures', 'digital art', 'Barcelona artist', 'Elena Vasquez'],
-  authors: [{ name: 'Elena Vasquez' }],
-  creator: 'Elena Vasquez',
-  publisher: 'Elena Vasquez Art',
+  description: 'Discover contemporary artworks by Laura Jurkowski. Original paintings, sculptures, and digital art available for purchase. Based in Barcelona, Spain.',
+  keywords: ['contemporary art', 'paintings', 'sculptures', 'digital art', 'Barcelona artist', 'Laura Jurkowski'],
+  authors: [{ name: 'Laura Jurkowski' }],
+  creator: 'Ajin',
+  publisher: 'Laura Jurkowski Art',
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
   openGraph: {
-    title: 'Elena Vasquez Art | Contemporary Artist Portfolio',
+    title: 'Moon Doggy | Contemporary Artist Portfolio',
     description: 'Contemporary artist creating stunning paintings and sculptures',
-    url: 'https://elenavasquez.art',
-    siteName: 'Elena Vasquez Art',
+    // url: 'https://moondoggy.art',
+    siteName: 'Moon Doggy Art',
     images: [
       {
         url: '/images/og-image.jpg',
@@ -53,7 +53,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Elena Vasquez Art',
+    title: 'Laura Jurkowski',
     description: 'Contemporary artist creating stunning paintings and sculptures',
     images: ['/images/twitter-image.jpg'],
   },
