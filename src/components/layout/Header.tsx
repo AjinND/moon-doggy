@@ -53,7 +53,7 @@ export default function Header() {
               <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full opacity-20 group-hover:opacity-40 transition-opacity duration-300 blur"></div>
             </div>
             <span className="text-xl font-serif font-bold artistic-text-gradient">
-              Elena Vasquez
+              Moon Doggy
             </span>
           </Link>
 

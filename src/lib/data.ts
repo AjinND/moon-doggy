@@ -83,8 +83,8 @@ export const testimonials: Testimonial[] = [
 ];
 
 export const sampleArtist: Artist = {
-  name: "Elena Vasquez",
-  bio: "Elena is a contemporary artist based in Barcelona, Spain. Her work explores the intersection of nature and human emotion through vibrant colors and organic forms. With over 15 years of experience, she has developed a unique style that captures the essence of fleeting moments in time.",
+  name: "Laura Jurkowski",
+  bio: "Laura is a contemporary artist based in Barcelona, Spain. Her work explores the intersection of nature and human emotion through vibrant colors and organic forms. With over 15 years of experience, she has developed a unique style that captures the essence of fleeting moments in time.",
   profileImage: "/images/artist/MoonDoggy_Pfp.jpg",
   statement: "Art is my language for expressing the inexpressible. Through my paintings, I seek to capture the delicate balance between chaos and harmony that exists in both nature and the human heart.",
   education: [
@@ -101,14 +101,14 @@ export const sampleArtist: Artist = {
     "Excellence in Contemporary Art, Spanish Art Awards (2021)"
   ],
   contact: {
-    email: "elena@elenavasquez.art",
+    email: "laura@laurajurkowski.art",
     phone: "+34 123 456 789",
     location: "Barcelona, Spain",
     social: {
-      x: "@elenavasquezart",
-      instagram: "@elenavasquezart",
-      facebook: "Elena Vasquez Art",
-      website: "www.elenavasquez.art"
+      x: "@laurajurkowskiart",
+      instagram: "@laurajurkowskiart",
+      facebook: "Laura Jurkowski Art",
+      website: "www.laurajurkowski.art"
     }
   }
 };
@@ -219,7 +219,7 @@ export const blogPosts: BlogPost[] = [
     content: 'Digital art has come a long way since its inception. From early pixel art to today\'s sophisticated 3D renders and AI-assisted creations, the journey has been nothing short of revolutionary. This post explores the key milestones in digital art history and what they mean for artists today.',
     imageUrl: '/images/artworks/img1.jpeg',
     author: {
-      name: 'Elena Vasquez',
+      name: 'Laura Jurkowski',
       avatar: '/images/artist/MoonDoggy_Pfp.jpg'
     },
     publishedAt: new Date('2024-02-15'),
@@ -235,7 +235,7 @@ export const blogPosts: BlogPost[] = [
     content: 'Every piece of art has a story to tell. In this post, I take you through my creative journey, from initial concept sketches to final touches. Learn about my techniques, inspirations, and the challenges faced along the way.',
     imageUrl: '/images/artworks/img3.jpeg',
     author: {
-      name: 'Elena Vasquez',
+      name: 'Laura Jurkowski',
       avatar: '/images/artist/MoonDoggy_Pfp.jpg'
     },
     publishedAt: new Date('2024-02-01'),
@@ -251,7 +251,7 @@ export const blogPosts: BlogPost[] = [
     content: 'I\'m thrilled to announce my upcoming exhibition "Urban Dreams" at Gallery Modern. This collection represents a year of work exploring how city life influences our dreams and aspirations. The exhibition will feature both digital and traditional pieces that capture the energy and complexity of urban living.',
     imageUrl: '/images/artworks/img5.jpeg',
     author: {
-      name: 'Elena Vasquez',
+      name: 'Laura Jurkowski',
       avatar: '/images/artist/MoonDoggy_Pfp.jpg'
     },
     publishedAt: new Date('2024-01-20'),

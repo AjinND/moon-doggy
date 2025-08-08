@@ -72,7 +72,7 @@ export default function ArtistIntro() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" asChild>
                 <Link href="/about">
-                  Learn More About Elena
+                  Learn More About Laura
                 </Link>
               </Button>
               <Button variant="outline" size="lg" asChild>
