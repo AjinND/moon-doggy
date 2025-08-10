@@ -1,24 +1,29 @@
 // src/app/gallery/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Search, Filter, Maximize2 } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Search, Grid, List, SlidersHorizontal } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Modal from '@/components/ui/Modal';
 import Loading from '@/components/ui/Loading';
 import ErrorBoundary from '@/components/ui/ErrorBoundary';
-import ImageWithLoading from '@/components/ui/ImageWithLoading';
 import { Card } from '@/components/ui/Card';
+import FilterBar from '@/components/gallery/FilterBar';
+import ArtCard from '@/components/gallery/ArtCard';
 import { sampleArtworks } from '@/lib/data';
 import { ArtCategory, Artwork } from '@/lib/types';
-import { capitalizeFirst, formatPrice } from '@/lib/utils';
+import ArtworkDetailModal from '@/components/gallery/ArtworkDetailModal';
 
 export default function GalleryPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<ArtCategory | 'all'>('all');
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 3000]);
+  const [availableOnly, setAvailableOnly] = useState(false);
+  const [featuredOnly, setFeaturedOnly] = useState(false);
   const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [loading, setLoading] = useState(true);
   const [artworks, setArtworks] = useState<Artwork[]>([]);
 
@@ -30,7 +35,6 @@ export default function GalleryPage() {
   useEffect(() => {
     const loadArtworks = async () => {
       setLoading(true);
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       setArtworks(sampleArtworks);
       setLoading(false);
@@ -39,30 +43,37 @@ export default function GalleryPage() {
     loadArtworks();
   }, []);
 
-  const filteredArtworks = artworks.filter(artwork => {
-    const matchesSearch = artwork.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         artwork.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         artwork.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesCategory = selectedCategory === 'all' || artwork.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  // Memoized filtered artworks for better performance
+  const filteredArtworks = useMemo(() => {
+    return artworks.filter(artwork => {
+      const matchesSearch = searchTerm === '' || 
+        artwork.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        artwork.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        artwork.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+      
+      const matchesCategory = selectedCategory === 'all' || artwork.category === selectedCategory;
+      const matchesPrice = artwork.price >= priceRange[0] && artwork.price <= priceRange[1];
+      const matchesAvailability = !availableOnly || artwork.available;
+      const matchesFeatured = !featuredOnly || artwork.featured;
+      
+      return matchesSearch && matchesCategory && matchesPrice && matchesAvailability && matchesFeatured;
+    });
+  }, [artworks, searchTerm, selectedCategory, priceRange, availableOnly, featuredOnly]);
 
   if (loading) {
     return (
       <div className="pt-16">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-purple-50 via-white to-pink-50 py-16">
+        <div className="bg-gradient-to-r from-purple-50 via-white to-pink-50 py-12 sm:py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">
               Gallery
             </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
               Explore the complete collection of artworks spanning different mediums, 
               styles, and periods of artistic expression.
             </p>
           </div>
         </div>
-
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <Loading size="lg" text="Loading gallery..." />
         </div>
@@ -70,122 +81,184 @@ export default function GalleryPage() {
     );
   }
 
+  const hasActiveFilters = selectedCategory !== 'all' || 
+    priceRange[0] > 0 || priceRange[1] < 3000 || 
+    availableOnly || featuredOnly;
+
   return (
     <ErrorBoundary>
       <div className="pt-16">
         {/* Header */}
-        <div className="bg-gradient-to-r from-purple-50 via-white to-pink-50 py-16">
+        <div className="bg-gradient-to-r from-purple-50 via-white to-pink-50 py-12 sm:py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">
               Gallery
             </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
               Explore the complete collection of artworks spanning different mediums, 
               styles, and periods of artistic expression.
             </p>
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Search and Filters */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-8">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <Input
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search artworks..."
-                  className="pl-10"
-                />
-              </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          {/* Search and Controls */}
+          <div className="flex flex-col gap-4 mb-6 sm:mb-8">
+            {/* Search Bar */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Input
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search artworks..."
+                className="pl-10 w-full"
+              />
             </div>
             
-            <Button
-              variant="outline"
-              onClick={() => setShowFilters(!showFilters)}
-              className="sm:hidden"
-            >
-              <Filter className="h-4 w-4 mr-2" />
-              Filters
-            </Button>
-          </div>
-
-          {/* Category Filters */}
-          <div className={`${showFilters ? 'block' : 'hidden'} sm:block mb-8`}>
-            <div className="flex flex-wrap gap-2">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                    selectedCategory === category
-                      ? 'bg-purple-600 text-white shadow-md'
-                      : 'bg-white text-gray-700 border border-gray-300 hover:bg-purple-50 hover:border-purple-300'
-                  }`}
+            {/* Controls Row */}
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="flex items-center gap-2"
+                  size="sm"
                 >
-                  {category === 'all' ? 'All' : capitalizeFirst(category.replace('-', ' '))}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Results Count */}
-          <div className="mb-6">
-            <p className="text-gray-600">
-              Showing {filteredArtworks.length} of {artworks.length} artworks
-            </p>
-          </div>
-
-          {/* Gallery Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredArtworks.map((artwork, index) => (
-              <Card 
-                key={artwork.id} 
-                hover 
-                artistic
-                className={`group cursor-pointer animate-fade-in opacity-0`}
-                style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
-                onClick={() => setSelectedArtwork(artwork)}
-              >
-                <div className="relative aspect-square overflow-hidden rounded-xl">
-                  <ImageWithLoading
-                    src={artwork.imageUrl}
-                    alt={artwork.title}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-500"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                  />
-                  
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  
-                  {/* Expand Icon */}
-                  <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center">
-                      <Maximize2 className="h-4 w-4 text-gray-700" />
-                    </div>
-                  </div>
-                  
-                  {/* Info Overlay */}
-                  <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
-                    <h3 className="font-serif font-semibold text-lg mb-1">{artwork.title}</h3>
-                    <p className="text-sm text-gray-200">{artwork.year} • {artwork.medium}</p>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-
-          {filteredArtworks.length === 0 && (
-            <div className="text-center py-16">
-              <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-                <span className="text-gray-400 text-3xl">🔍</span>
+                  <SlidersHorizontal className="h-4 w-4" />
+                  <span className="hidden sm:inline">Filters</span>
+                  {hasActiveFilters && (
+                    <span className="w-2 h-2 bg-purple-600 rounded-full"></span>
+                  )}
+                </Button>
+                
+                <span className="text-sm text-gray-600 hidden sm:inline">
+                  {filteredArtworks.length} artwork{filteredArtworks.length !== 1 ? 's' : ''}
+                </span>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No artworks found</h3>
-              <p className="text-gray-600">Try adjusting your search or filters.</p>
+
+              {/* View Mode Toggle */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600 sm:hidden">
+                  {filteredArtworks.length} result{filteredArtworks.length !== 1 ? 's' : ''}
+                </span>
+                <div className="flex border border-gray-300 rounded-lg overflow-hidden">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`p-2 transition-colors ${viewMode === 'grid' ? 'bg-purple-100 text-purple-600' : 'text-gray-600 hover:bg-gray-50'}`}
+                    aria-label="Grid view"
+                  >
+                    <Grid className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={`p-2 transition-colors ${viewMode === 'list' ? 'bg-purple-100 text-purple-600' : 'text-gray-600 hover:bg-gray-50'}`}
+                    aria-label="List view"
+                  >
+                    <List className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
             </div>
-          )}
+          </div>
+
+          <div className="flex gap-6 lg:gap-8 relative">
+            {/* Mobile Filters Overlay */}
+            {showFilters && (
+              <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden" />
+            )}
+
+            {/* Sidebar Filters */}
+            <div className={`
+              ${showFilters ? 'translate-x-0' : '-translate-x-full'}
+              lg:translate-x-0
+              fixed lg:static
+              left-0 top-0
+              w-80 lg:w-64
+              h-full lg:h-auto
+              bg-white lg:bg-transparent
+              shadow-2xl lg:shadow-none
+              z-50 lg:z-auto
+              transition-transform duration-300 ease-in-out
+              lg:transition-none
+              flex-shrink-0
+              overflow-y-auto lg:overflow-visible
+            `}>
+              <div className="p-6 lg:p-0">
+                {/* Mobile Filter Header */}
+                <div className="flex items-center justify-between mb-6 lg:hidden">
+                  <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
+                  <Button
+                    variant="ghost"
+                    onClick={() => setShowFilters(false)}
+                    className="p-2"
+                  >
+                    <span className="sr-only">Close filters</span>
+                    ×
+                  </Button>
+                </div>
+
+                <Card className="p-6 sticky top-6">
+                  <FilterBar
+                    categories={categories}
+                    selectedCategory={selectedCategory}
+                    onCategoryChange={setSelectedCategory}
+                    priceRange={priceRange}
+                    onPriceRangeChange={setPriceRange}
+                    availableOnly={availableOnly}
+                    onAvailableOnlyChange={setAvailableOnly}
+                    featuredOnly={featuredOnly}
+                    onFeaturedOnlyChange={setFeaturedOnly}
+                  />
+                </Card>
+              </div>
+            </div>
+
+            {/* Gallery Grid */}
+            <div className="flex-1 min-w-0">
+              {filteredArtworks.length > 0 ? (
+                <div className={
+                  viewMode === 'grid'
+                    ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6'
+                    : 'space-y-4 sm:space-y-6'
+                }>
+                  {filteredArtworks.map((artwork, index) => (
+                    <ArtCard
+                      key={artwork.id}
+                      artwork={artwork}
+                      viewMode={viewMode}
+                      onExpand={setSelectedArtwork}
+                      index={index}
+                      variant="gallery"
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-16">
+                  <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full flex items-center justify-center">
+                    <span className="text-4xl">🎨</span>
+                  </div>
+                  <h3 className="text-xl font-serif font-semibold text-gray-900 mb-2">
+                    No artworks found
+                  </h3>
+                  <p className="text-gray-600 max-w-sm mx-auto mb-6">
+                    Try adjusting your search criteria or browse different categories to discover amazing artworks.
+                  </p>
+                  <Button
+                    onClick={() => {
+                      setSearchTerm('');
+                      setSelectedCategory('all');
+                      setPriceRange([0, 3000]);
+                      setAvailableOnly(false);
+                      setFeaturedOnly(false);
+                    }}
+                    variant="outline"
+                  >
+                    Clear All Filters
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Artwork Modal */}
@@ -195,70 +268,10 @@ export default function GalleryPage() {
           size="xl"
         >
           {selectedArtwork && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="relative aspect-square">
-                <ImageWithLoading
-                  src={selectedArtwork.imageUrl}
-                  alt={selectedArtwork.title}
-                  fill
-                  className="object-cover rounded-lg"
-                  priority
-                />
-              </div>
-              
-              <div className="space-y-6">
-                <div>
-                  <h2 className="text-2xl font-serif font-bold text-gray-900 mb-2">
-                    {selectedArtwork.title}
-                  </h2>
-                  <p className="text-gray-600">{selectedArtwork.year}</p>
-                </div>
-                
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold text-gray-900">Medium</h4>
-                    <p className="text-gray-700">{selectedArtwork.medium}</p>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-semibold text-gray-900">Dimensions</h4>
-                    <p className="text-gray-700">{selectedArtwork.dimensions}</p>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-semibold text-gray-900">Description</h4>
-                    <p className="text-gray-700 leading-relaxed">{selectedArtwork.description}</p>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-semibold text-gray-900">Tags</h4>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {selectedArtwork.tags.map((tag) => (
-                        <span key={tag} className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                
-                {selectedArtwork.available && (
-                  <div className="pt-4 border-t border-gray-200">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-2xl font-bold text-purple-600">
-                        {formatPrice(selectedArtwork.price)}
-                      </span>
-                      <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">
-                        Available
-                      </span>
-                    </div>
-                    <Button className="w-full">
-                      View in Shop
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </div>
+            <ArtworkDetailModal 
+              artwork={selectedArtwork} 
+              onClose={() => setSelectedArtwork(null)}
+            />
           )}
         </Modal>
       </div>

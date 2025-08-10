@@ -16,6 +16,17 @@ export interface Artwork {
   tags: string[];
 }
 
+export interface ArtCardProps {
+  artwork: Artwork;
+  viewMode?: 'grid' | 'list';
+  onExpand?: (artwork: Artwork) => void;
+  onShare?: (artwork: Artwork) => void;
+  index: number;
+  showPrice?: boolean;
+  showActions?: boolean;
+  variant?: 'gallery' | 'shop' | 'wishlist';
+}
+
 export interface Testimonial {
   id: number;
   name: string;
@@ -143,4 +154,13 @@ export interface BlogPost {
 export interface GiftCardPurchase extends GiftCard {
   orderId: string;
   paymentStatus: 'pending' | 'completed' | 'failed';
+}
+
+export type ToastType = 'success' | 'error' | 'info' | 'warning' | 'wishlist-added' | 'wishlist-removed' | 'cart-added';
+export interface Toast {
+  id: string;
+  type: ToastType;
+  title: string;
+  message?: string;
+  duration?: number;
 }

@@ -1,118 +1,280 @@
 // src/components/gallery/ArtCard.tsx
 'use client';
 
-import { useState } from 'react';
-import { Heart, Share2, Maximize2, Info } from 'lucide-react';
-import { Artwork } from '@/lib/types';
+import { useState, useEffect } from 'react';
+import { Heart, Share2, ShoppingCart, Eye, MoreHorizontal } from 'lucide-react';
+import { ArtCardProps } from '@/lib/types';
 import { Card } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import ImageWithLoading from '@/components/ui/ImageWithLoading';
 import { formatPrice } from '@/lib/utils';
 import { resolveImagePath } from '@/lib/image';
-
-interface ArtCardProps {
-  artwork: Artwork;
-  onExpand: (artwork: Artwork) => void;
-  onShare?: (artwork: Artwork) => void;
-  index: number;
-}
-
-export default function ArtCard({ artwork, onExpand, onShare, index }: ArtCardProps) {
+import { useWishlist } from '@/hooks/useWishlist';
+import { useCart } from '@/hooks/useCart';
+import Link from 'next/link';
+export default function ArtCard({ 
+  artwork, 
+  viewMode = 'grid',
+  onExpand, 
+  onShare, 
+  index,
+  showPrice = true,
+  showActions = true,
+  variant = 'gallery'
+}: ArtCardProps) {
+  const { isInWishlist, toggleWishlist, isLoaded } = useWishlist();
+  const { addToCart } = useCart();
+  const [showQuickActions, setShowQuickActions] = useState(false);
+  
+  // Local state that syncs with wishlist hook
   const [isLiked, setIsLiked] = useState(false);
 
-  const handleShare = (e: React.MouseEvent) => {
+  // Update local state when wishlist loads or changes
+  useEffect(() => {
+    if (isLoaded) {
+      setIsLiked(isInWishlist(artwork.id));
+    }
+  }, [isLoaded, artwork.id, isInWishlist]);
+
+  const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (onShare) {
       onShare(artwork);
     } else {
-      // Default share functionality
-      if (navigator.share) {
-        navigator.share({
-          title: artwork.title,
-          text: artwork.description,
-          url: window.location.href + `/gallery/${artwork.id}`
-        });
+      try {
+        if (navigator.share) {
+          await navigator.share({
+            title: artwork.title,
+            text: artwork.description,
+            url: `${window.location.origin}/shop/${artwork.id}`
+          });
+        } else {
+          await navigator.clipboard.writeText(`${window.location.origin}/shop/${artwork.id}`);
+        }
+      } catch (error) {
+        console.log('Share failed:', error);
       }
     }
   };
 
-  const handleLike = (e: React.MouseEvent) => {
+  const handleWishlist = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsLiked(!isLiked);
+    toggleWishlist(artwork);
   };
 
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (artwork.available) {
+      addToCart(artwork);
+    }
+  };
+
+  const handleCardClick = () => {
+    if (onExpand) {
+      onExpand(artwork);
+    }
+  };
+
+  // Close quick actions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setShowQuickActions(false);
+    };
+
+    if (showQuickActions) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [showQuickActions]);
+
+  // List View Layout
+  if (viewMode === 'list') {
+    return (
+      <Card 
+        hover 
+        artistic
+        className={`animate-fade-in opacity-0 cursor-pointer`}
+        style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
+        onClick={handleCardClick}
+      >
+        <div className="flex flex-col sm:flex-row">
+          <div className="relative aspect-square sm:w-32 sm:h-32 flex-shrink-0">
+            <ImageWithLoading
+              src={resolveImagePath(artwork.imageUrl, artwork.images)}
+              alt={artwork.title}
+              fill
+              className="object-cover rounded-t-xl sm:rounded-l-xl sm:rounded-tr-none"
+              sizes="(max-width: 640px) 100vw, 128px"
+            />
+            
+            {/* Always visible wishlist button for list view */}
+            {variant !== 'wishlist' && showActions && isLoaded && (
+              <button
+                onClick={handleWishlist}
+                className={`absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200 touch-button ${
+                  isLiked 
+                    ? 'bg-red-500 text-white' 
+                    : 'bg-white/90 text-gray-700 hover:bg-white'
+                }`}
+                aria-label={isLiked ? 'Remove from wishlist' : 'Add to wishlist'}
+              >
+                <Heart className={`h-3 w-3 ${isLiked ? 'fill-current' : ''}`} />
+              </button>
+            )}
+          </div>
+          
+          <div className="flex-1 p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-4">
+              <div className="flex-1">
+                <h3 className="text-lg sm:text-xl font-serif font-semibold text-gray-900 mb-2">
+                  {artwork.title}
+                </h3>
+                <p className="text-sm text-gray-600 mb-2">{artwork.medium} • {artwork.dimensions}</p>
+                <p className="text-sm text-gray-700 line-clamp-2 mb-3">{artwork.description}</p>
+                
+                <div className="flex flex-wrap gap-1 mb-3">
+                  {artwork.tags.slice(0, 3).map((tag) => (
+                    <span key={tag} className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="flex flex-col sm:items-end gap-3">
+                {showPrice && (
+                  <span className="text-xl sm:text-2xl font-bold text-purple-600">
+                    {formatPrice(artwork.price)}
+                  </span>
+                )}
+                
+                {artwork.available ? (
+                  <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">
+                    Available
+                  </span>
+                ) : (
+                  <span className="text-xs text-red-600 bg-red-100 px-2 py-1 rounded-full">
+                    Sold
+                  </span>
+                )}
+                
+                {showActions && (
+                  <div className="flex items-center gap-2">
+                    {variant === 'shop' && artwork.available && (
+                      <Button size="sm" onClick={handleAddToCart} className="touch-button">
+                        <ShoppingCart className="h-4 w-4 mr-1" />
+                        <span className="hidden sm:inline">Cart</span>
+                      </Button>
+                    )}
+                    
+                    <Button variant="outline" size="sm" onClick={handleShare} className="touch-button">
+                      <Share2 className="h-4 w-4" />
+                    </Button>
+                    
+                    <Button variant="outline" size="sm" asChild className="touch-button">
+                      <Link href={`/shop/${artwork.id}`}>
+                        <Eye className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
+  // Grid View Layout - Improved UX
   return (
     <Card 
       hover 
       artistic
       className={`group cursor-pointer animate-fade-in opacity-0 relative overflow-hidden`}
       style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
-      onClick={() => onExpand(artwork)}
+      onClick={handleCardClick}
     >
       <div className="relative aspect-square overflow-hidden">
         <ImageWithLoading
           src={resolveImagePath(artwork.imageUrl, artwork.images)}
           alt={artwork.title}
           fill
-          className="object-cover transition-transform duration-700 group-hover:scale-110"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          priority={index < 4} // Prioritize loading first 4 images
+          priority={index < 4}
         />
 
-        {/* Overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        
-        {/* Action buttons */}
-        <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
-          <Button
-            onClick={handleLike}
-            className={`w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-200 ${
-              isLiked 
-                ? 'bg-red-500 text-white' 
-                : 'bg-white/90 text-gray-700 hover:bg-white'
-            }`}
-          >
-            <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
-          </Button>
-          
-          <Button
-            onClick={handleShare}
-            className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-700 hover:bg-white transition-colors duration-200"
-          >
-            <Share2 className="h-4 w-4" />
-          </Button>
-          
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              onExpand(artwork);
-            }}
-            className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-700 hover:bg-white transition-colors duration-200"
-          >
-            <Maximize2 className="h-4 w-4" />
-          </Button>
-        </div>
-        
-        {/* Info overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 text-white opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
-          <h3 className="font-serif font-semibold text-lg mb-1 line-clamp-1">
-            {artwork.title}
-          </h3>
-          <p className="text-sm text-gray-200 mb-2">{artwork.year} • {artwork.medium}</p>
-          <div className="flex justify-between items-center">
-            <span className="text-xs text-gray-300">{artwork.dimensions}</span>
-            {artwork.available && (
-              <span className="text-sm font-semibold bg-white/20 backdrop-blur-sm px-2 py-1 rounded">
-                {formatPrice(artwork.price)}
-              </span>
+        {/* Always visible action buttons - Better UX */}
+        {showActions && isLoaded && (
+          <div className="absolute top-3 right-3 flex flex-col gap-2">
+            {/* Wishlist Button - Always Visible */}
+            {variant !== 'wishlist' && (
+              <button
+                onClick={handleWishlist}
+                className={`w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-sm border transition-all duration-200 touch-button ${
+                  isLiked 
+                    ? 'bg-red-500 text-white border-red-500' 
+                    : 'bg-white/95 text-gray-700 border-white/20 hover:bg-white hover:scale-110'
+                } shadow-lg`}
+                aria-label={isLiked ? 'Remove from wishlist' : 'Add to wishlist'}
+              >
+                <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
+              </button>
             )}
+            
+            {/* More Actions Button */}
+            <div className="relative">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowQuickActions(!showQuickActions);
+                }}
+                className="w-9 h-9 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-700 hover:bg-white hover:scale-110 transition-all duration-200 border border-white/20 shadow-lg touch-button"
+                aria-label="More actions"
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </button>
+              
+              {/* Quick Actions Menu */}
+              {showQuickActions && (
+                <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-10 min-w-[120px]">
+                  <button
+                    onClick={handleShare}
+                    className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors touch-button"
+                  >
+                    <Share2 className="h-4 w-4 mr-2" />
+                    Share
+                  </button>
+                  
+                  <Link
+                    href={`/shop/${artwork.id}`}
+                    className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors touch-button"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Eye className="h-4 w-4 mr-2" />
+                    View Details
+                  </Link>
+                  
+                  {variant === 'shop' && artwork.available && (
+                    <button
+                      onClick={handleAddToCart}
+                      className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors touch-button"
+                    >
+                      <ShoppingCart className="h-4 w-4 mr-2" />
+                      Add to Cart
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
         
         {/* Featured badge */}
         {artwork.featured && (
-          <div className="absolute top-4 left-4">
-            <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-medium px-2 py-1 rounded-full">
+          <div className="absolute top-3 left-3">
+            <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-medium px-2 py-1 rounded-full shadow-lg">
               Featured
             </span>
           </div>
@@ -120,9 +282,18 @@ export default function ArtCard({ artwork, onExpand, onShare, index }: ArtCardPr
         
         {/* Availability indicator */}
         {!artwork.available && (
-          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-            <span className="bg-white text-gray-900 px-4 py-2 rounded-lg font-medium">
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+            <span className="bg-white text-gray-900 px-4 py-2 rounded-lg font-medium shadow-lg">
               Sold
+            </span>
+          </div>
+        )}
+
+        {/* Price overlay for available items */}
+        {artwork.available && showPrice && (
+          <div className="absolute bottom-3 left-3">
+            <span className="bg-white/95 backdrop-blur-sm text-purple-600 font-semibold px-3 py-1 rounded-full text-sm shadow-lg border border-white/20">
+              {formatPrice(artwork.price)}
             </span>
           </div>
         )}
@@ -130,20 +301,17 @@ export default function ArtCard({ artwork, onExpand, onShare, index }: ArtCardPr
       
       {/* Card content */}
       <div className="p-4">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="font-serif font-semibold text-gray-900 line-clamp-1 flex-1">
-            {artwork.title}
-          </h3>
-          <Button className="ml-2 text-gray-400 hover:text-gray-600 transition-colors">
-            <Info className="h-4 w-4" />
-          </Button>
-        </div>
+        <h3 className="font-serif font-semibold text-gray-900 line-clamp-1 mb-1">
+          {artwork.title}
+        </h3>
         
-        <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+        <p className="text-sm text-gray-600 mb-2">{artwork.medium} • {artwork.year}</p>
+        
+        <p className="text-sm text-gray-700 mb-3 line-clamp-2">
           {artwork.description}
         </p>
         
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-end">
           <div className="flex gap-1">
             {artwork.tags.slice(0, 2).map((tag) => (
               <span 
@@ -160,10 +328,15 @@ export default function ArtCard({ artwork, onExpand, onShare, index }: ArtCardPr
             )}
           </div>
           
-          {artwork.available && (
-            <span className="text-sm font-semibold text-purple-600">
-              {formatPrice(artwork.price)}
-            </span>
+          {/* Quick action in card footer for mobile */}
+          {variant === 'shop' && artwork.available && (
+            <Button
+              onClick={handleAddToCart}
+              size="sm"
+              className="px-3 md:hidden touch-button"
+            >
+              <ShoppingCart className="h-4 w-4" />
+            </Button>
           )}
         </div>
       </div>

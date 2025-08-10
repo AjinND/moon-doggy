@@ -3,7 +3,7 @@
 import { Inter, Playfair_Display } from 'next/font/google';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-import './globals.css'; // Ensure global styles are imported
+import './globals.css';
 import { ToastProvider } from "@/components/ui/Toast";
 import ErrorBoundary from '@/components/ui/ErrorBoundary';
 
@@ -18,7 +18,6 @@ const playfair = Playfair_Display({
   variable: '--font-playfair',
   display: 'swap',
 });
-
 
 export const metadata = {
   title: {
@@ -38,7 +37,6 @@ export const metadata = {
   openGraph: {
     title: 'Moon Doggy | Contemporary Artist Portfolio',
     description: 'Contemporary artist creating stunning paintings and sculptures',
-    // url: 'https://moondoggy.art',
     siteName: 'Moon Doggy Art',
     images: [
       {

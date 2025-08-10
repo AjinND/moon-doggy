@@ -1,6 +1,6 @@
 // src/lib/cart.ts
 
-import { Artwork, Cart, CartItem } from './types';
+import { Artwork, Cart } from './types';
 
 export class CartManager {
   private static instance: CartManager;
@@ -15,11 +15,10 @@ export class CartManager {
   }
 
   constructor() {
-  if (typeof window !== 'undefined') {
-    // Add a small delay to ensure hydration is complete
-    setTimeout(() => this.loadFromStorage(), 100);
+    if (typeof window !== 'undefined') {
+      setTimeout(() => this.loadFromStorage(), 100);
+    }
   }
-}
 
   subscribe(listener: (cart: Cart) => void) {
     this.listeners.push(listener);
@@ -77,6 +76,17 @@ export class CartManager {
     
     this.recalculateTotal();
     this.notify();
+
+    // Emit cart event for toast notification
+    if (typeof window !== 'undefined' && window.dispatchEvent) {
+      window.dispatchEvent(new CustomEvent('cart-updated', {
+        detail: { 
+          action: 'added',
+          artwork: artwork.title,
+          quantity: quantity
+        }
+      }));
+    }
   }
 
   removeItem(artworkId: string) {
@@ -115,4 +125,3 @@ export class CartManager {
     return this.cart.total;
   }
 }
-

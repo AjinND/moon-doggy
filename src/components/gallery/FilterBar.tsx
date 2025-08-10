@@ -98,7 +98,7 @@ export default function FilterBar({
         )}
       </div>
 
-      {/* Price Range */}
+      {/* Price Range - Fixed Layout */}
       <div>
         <button
           onClick={() => toggleSection('price')}
@@ -113,61 +113,129 @@ export default function FilterBar({
         </button>
         
         {expandedSections.price && (
-          <div className="space-y-4">
-            <div className="px-2">
-              <div className="relative">
-                <input
-                  type="range"
-                  min="0"
-                  max="3000"
-                  step="50"
-                  value={priceRange[0]}
-                  onChange={(e) => onPriceRangeChange([parseInt(e.target.value), priceRange[1]])}
-                  className="absolute w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer z-10 opacity-70"
-                />
-                <input
-                  type="range"
-                  min="0"
-                  max="3000"
-                  step="50"
-                  value={priceRange[1]}
-                  onChange={(e) => onPriceRangeChange([priceRange[0], parseInt(e.target.value)])}
-                  className="absolute w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                />
+          <div className="space-y-6">
+            {/* Current Range Display */}
+            <div className="bg-purple-50 p-3 rounded-lg">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium text-purple-700">Selected Range:</span>
+                <span className="text-sm font-bold text-purple-900">
+                  ${priceRange[0]} - ${priceRange[1]}
+                </span>
               </div>
             </div>
-            
-            <div className="flex justify-between text-sm">
-              <div className="bg-gray-100 px-3 py-1 rounded">
-                <span className="text-gray-600">Min: </span>
-                <span className="font-medium">${priceRange[0]}</span>
+
+            {/* Dual Range Slider */}
+            <div className="space-y-4">
+              <div className="px-3">
+                <div className="relative h-6 flex items-center">
+                  {/* Background track */}
+                  <div className="absolute w-full h-2 bg-gray-200 rounded-full"></div>
+                  
+                  {/* Active track */}
+                  <div 
+                    className="absolute h-2 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full"
+                    style={{
+                      left: `${(priceRange[0] / 3000) * 100}%`,
+                      width: `${((priceRange[1] - priceRange[0]) / 3000) * 100}%`
+                    }}
+                  ></div>
+                  
+                  {/* Min range slider */}
+                  <input
+                    type="range"
+                    min="0"
+                    max="3000"
+                    step="50"
+                    value={priceRange[0]}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value);
+                      if (value < priceRange[1]) {
+                        onPriceRangeChange([value, priceRange[1]]);
+                      }
+                    }}
+                    className="absolute w-full h-2 bg-transparent appearance-none cursor-pointer range-slider"
+                  />
+                  
+                  {/* Max range slider */}
+                  <input
+                    type="range"
+                    min="0"
+                    max="3000"
+                    step="50"
+                    value={priceRange[1]}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value);
+                      if (value > priceRange[0]) {
+                        onPriceRangeChange([priceRange[0], value]);
+                      }
+                    }}
+                    className="absolute w-full h-2 bg-transparent appearance-none cursor-pointer range-slider"
+                  />
+                </div>
               </div>
-              <div className="bg-gray-100 px-3 py-1 rounded">
-                <span className="text-gray-600">Max: </span>
-                <span className="font-medium">${priceRange[1]}</span>
+              
+              {/* Manual Input Fields */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Min Price</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="3000"
+                    step="50"
+                    value={priceRange[0]}
+                    onChange={(e) => {
+                      const value = Math.max(0, parseInt(e.target.value) || 0);
+                      if (value < priceRange[1]) {
+                        onPriceRangeChange([value, priceRange[1]]);
+                      }
+                    }}
+                    className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Max Price</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="3000"
+                    step="50"
+                    value={priceRange[1]}
+                    onChange={(e) => {
+                      const value = Math.min(3000, parseInt(e.target.value) || 3000);
+                      if (value > priceRange[0]) {
+                        onPriceRangeChange([priceRange[0], value]);
+                      }
+                    }}
+                    className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                  />
+                </div>
               </div>
             </div>
             
             {/* Quick price filters */}
-            <div className="grid grid-cols-2 gap-2">
-              {[
-                [0, 500],
-                [500, 1000],
-                [1000, 2000],
-                [2000, 3000]
-              ].map(([min, max]) => (
-                <button
-                  key={`${min}-${max}`}
-                  onClick={() => onPriceRangeChange([min, max])}
-                  className={`px-3 py-2 text-xs rounded-lg border transition-all duration-200 ${
-                    priceRange[0] === min && priceRange[1] === max
-                      ? 'border-purple-300 bg-purple-50 text-purple-700'
-                      : 'border-gray-200 hover:border-gray-300 text-gray-600'
-                  }`}
-                >
-                  ${min} - ${max}
-                </button>
-              ))}
+            <div className="space-y-2">
+              <h4 className="text-sm font-medium text-gray-700">Quick Select:</h4>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  [0, 500],
+                  [500, 1000],
+                  [1000, 2000],
+                  [2000, 3000]
+                ].map(([min, max]) => (
+                  <button
+                    key={`${min}-${max}`}
+                    onClick={() => onPriceRangeChange([min, max])}
+                    className={`px-3 py-2 text-xs rounded-lg border transition-all duration-200 ${
+                      priceRange[0] === min && priceRange[1] === max
+                        ? 'border-purple-300 bg-purple-50 text-purple-700 font-medium'
+                        : 'border-gray-200 hover:border-gray-300 text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    ${min} - ${max}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -188,8 +256,8 @@ export default function FilterBar({
         </button>
         
         {expandedSections.availability && (
-          <div className="space-y-3">
-            <label className="flex items-center cursor-pointer group">
+          <div className="space-y-4">
+            <label className="flex items-center cursor-pointer group p-2 rounded-lg hover:bg-gray-50 transition-colors">
               <input
                 type="checkbox"
                 checked={availableOnly}
@@ -201,7 +269,7 @@ export default function FilterBar({
               </span>
             </label>
             
-            <label className="flex items-center cursor-pointer group">
+            <label className="flex items-center cursor-pointer group p-2 rounded-lg hover:bg-gray-50 transition-colors">
               <input
                 type="checkbox"
                 checked={featuredOnly}
