@@ -1,7 +1,7 @@
 // src/components/ui/Toast.tsx
 'use client';
 
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect, useRef } from 'react';
 import { Heart, X, Check, ShoppingCart } from 'lucide-react';
 import { Toast, ToastType } from '@/lib/types';
 
@@ -22,6 +22,7 @@ export function useToast() {
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const lastEventRef = useRef<string>('');
 
   const addToast = (toast: Omit<Toast, 'id'>) => {
     const id = Math.random().toString(36).substring(2, 9);
@@ -42,6 +43,22 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const handleWishlistUpdate = (event: CustomEvent) => {
       const { action, artwork, count } = event.detail;
+      
+      // Create a unique identifier for this event
+      const eventId = `${action}-${artwork}-${Date.now()}`;
+      
+      // Prevent duplicate events within 100ms
+      if (lastEventRef.current === eventId) {
+        return;
+      }
+      lastEventRef.current = eventId;
+      
+      // Clear the reference after a short delay to allow legitimate duplicate actions
+      setTimeout(() => {
+        if (lastEventRef.current === eventId) {
+          lastEventRef.current = '';
+        }
+      }, 100);
       
       // Use setTimeout to ensure this runs after the current render cycle
       setTimeout(() => {

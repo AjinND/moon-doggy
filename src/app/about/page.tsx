@@ -1,13 +1,37 @@
 // src/app/about/page.tsx
+'use client';
 
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { MapPin, Award, GraduationCap, Calendar, Mail, Instagram } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
+import Loading from '@/components/ui/Loading';
 import { sampleArtist } from '@/lib/data';
 
 export default function AboutPage() {
+  const [loading, setLoading] = useState(true);
+
+  // Simulate loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="pt-16 min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <Loading size="lg" text="Loading artist information..." />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="pt-16">
       {/* Hero Section */}
@@ -119,7 +143,80 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="space-y-6">
+          {/* Desktop: Timeline Layout, Mobile: Card Layout */}
+          <div className="hidden lg:block">
+            {/* Timeline for larger screens */}
+            <div className="relative">
+              {/* Central timeline line */}
+              <div className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-gradient-to-b from-purple-400 via-pink-400 to-purple-400 h-full rounded-full"></div>
+              
+              <div className="space-y-16">
+                {sampleArtist.exhibitions.map((exhibition, index) => (
+                  <div
+                    key={index}
+                    className={`relative flex items-center ${
+                      index % 2 === 0 ? 'justify-start' : 'justify-end'
+                    } animate-fade-in opacity-0`}
+                    style={{ animationDelay: `${index * 300}ms`, animationFillMode: 'forwards' }}
+                  >
+                    {/* Timeline dot */}
+                    <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full border-4 border-white shadow-lg z-10"></div>
+                    
+                    {/* Content card */}
+                    <Card 
+                      artistic
+                      className={`w-5/12 ${index % 2 === 0 ? 'mr-8' : 'ml-8'} hover-lift`}
+                    >
+                      <CardContent className="p-6">
+                        <div className="flex items-start justify-between mb-4">
+                          <div>
+                            <div className="flex items-center mb-2">
+                              <Calendar className="h-5 w-5 text-purple-600 mr-2" />
+                              <span className="text-purple-600 font-semibold text-lg">{exhibition.year}</span>
+                              <span className={`ml-3 px-3 py-1 rounded-full text-xs font-medium ${
+                                exhibition.type === 'solo' 
+                                  ? 'bg-purple-100 text-purple-700' 
+                                  : 'bg-blue-100 text-blue-700'
+                              }`}>
+                                {exhibition.type.toUpperCase()}
+                              </span>
+                            </div>
+                            <h3 className="text-xl font-serif font-semibold text-gray-900 mb-2">
+                              {exhibition.title}
+                            </h3>
+                            <p className="text-gray-600 flex items-center">
+                              <MapPin className="h-4 w-4 mr-1" />
+                              {exhibition.location}
+                            </p>
+                          </div>
+                          
+                          {/* Decorative element */}
+                          <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full flex items-center justify-center">
+                            <span className="text-2xl">
+                              {exhibition.type === 'solo' ? '🎨' : '🏛️'}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        {/* Additional details for larger cards */}
+                        <div className="pt-4 border-t border-gray-200">
+                          <p className="text-sm text-gray-600">
+                            {exhibition.type === 'solo' 
+                              ? 'A comprehensive showcase of artistic vision and creative journey.'
+                              : 'Featured alongside contemporary artists in a curated collective exhibition.'
+                            }
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile: Simple card layout */}
+          <div className="lg:hidden space-y-6">
             {sampleArtist.exhibitions.map((exhibition, index) => (
               <Card 
                 key={index} 
@@ -176,4 +273,3 @@ export default function AboutPage() {
     </div>
   );
 }
-

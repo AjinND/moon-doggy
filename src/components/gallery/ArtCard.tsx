@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Heart, Share2, ShoppingCart, Eye, MoreHorizontal } from 'lucide-react';
+import { Heart, Share2, ShoppingCart, Eye } from 'lucide-react';
 import { ArtCardProps } from '@/lib/types';
 import { Card } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -12,6 +12,7 @@ import { resolveImagePath } from '@/lib/image';
 import { useWishlist } from '@/hooks/useWishlist';
 import { useCart } from '@/hooks/useCart';
 import Link from 'next/link';
+
 export default function ArtCard({ 
   artwork, 
   viewMode = 'grid',
@@ -22,9 +23,8 @@ export default function ArtCard({
   showActions = true,
   variant = 'gallery'
 }: ArtCardProps) {
-  const { isInWishlist, toggleWishlist, isLoaded } = useWishlist();
+  const { isInWishlist, addToWishlist, removeFromWishlist, isLoaded } = useWishlist();
   const { addToCart } = useCart();
-  const [showQuickActions, setShowQuickActions] = useState(false);
   
   // Local state that syncs with wishlist hook
   const [isLiked, setIsLiked] = useState(false);
@@ -59,7 +59,12 @@ export default function ArtCard({
 
   const handleWishlist = (e: React.MouseEvent) => {
     e.stopPropagation();
-    toggleWishlist(artwork);
+    // Only call the hook methods directly without additional event dispatching
+    if (isLiked) {
+      removeFromWishlist(artwork.id);
+    } else {
+      addToWishlist(artwork);
+    }
   };
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -74,18 +79,6 @@ export default function ArtCard({
       onExpand(artwork);
     }
   };
-
-  // Close quick actions when clicking outside
-  useEffect(() => {
-    const handleClickOutside = () => {
-      setShowQuickActions(false);
-    };
-
-    if (showQuickActions) {
-      document.addEventListener('click', handleClickOutside);
-      return () => document.removeEventListener('click', handleClickOutside);
-    }
-  }, [showQuickActions]);
 
   // List View Layout
   if (viewMode === 'list') {
@@ -186,7 +179,7 @@ export default function ArtCard({
     );
   }
 
-  // Grid View Layout - Improved UX
+  // Grid View Layout - Simplified with direct action buttons
   return (
     <Card 
       hover 
@@ -205,14 +198,14 @@ export default function ArtCard({
           priority={index < 4}
         />
 
-        {/* Always visible action buttons - Better UX */}
+        {/* Action Buttons Layout */}
         {showActions && isLoaded && (
-          <div className="absolute top-3 right-3 flex flex-col gap-2">
-            {/* Wishlist Button - Always Visible */}
+          <>
+            {/* Wishlist Button - Top Right (Always Visible) */}
             {variant !== 'wishlist' && (
               <button
                 onClick={handleWishlist}
-                className={`w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-sm border transition-all duration-200 touch-button ${
+                className={`absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-sm border transition-all duration-200 touch-button ${
                   isLiked 
                     ? 'bg-red-500 text-white border-red-500' 
                     : 'bg-white/95 text-gray-700 border-white/20 hover:bg-white hover:scale-110'
@@ -222,53 +215,27 @@ export default function ArtCard({
                 <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
               </button>
             )}
+
+            {/* Share Button - Below Wishlist (Visible on Hover) */}
+            <button
+              onClick={handleShare}
+              className="absolute top-16 right-3 w-9 h-9 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-700 hover:bg-white hover:scale-110 transition-all duration-200 border border-white/20 shadow-lg touch-button opacity-0 group-hover:opacity-100"
+              aria-label="Share artwork"
+            >
+              <Share2 className="h-4 w-4" />
+            </button>
             
-            {/* More Actions Button */}
-            <div className="relative">
+            {/* Cart Button - Bottom Right (Visible on Hover) */}
+            {/* {artwork.available && (
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowQuickActions(!showQuickActions);
-                }}
-                className="w-9 h-9 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-700 hover:bg-white hover:scale-110 transition-all duration-200 border border-white/20 shadow-lg touch-button"
-                aria-label="More actions"
+                onClick={handleAddToCart}
+                className="absolute bottom-3 right-3 w-10 h-10 bg-purple-600/95 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-purple-600 hover:scale-110 transition-all duration-200 shadow-lg touch-button opacity-0 group-hover:opacity-100"
+                aria-label="Add to cart"
               >
-                <MoreHorizontal className="h-4 w-4" />
+                <ShoppingCart className="h-4 w-4" />
               </button>
-              
-              {/* Quick Actions Menu */}
-              {showQuickActions && (
-                <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-10 min-w-[120px]">
-                  <button
-                    onClick={handleShare}
-                    className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors touch-button"
-                  >
-                    <Share2 className="h-4 w-4 mr-2" />
-                    Share
-                  </button>
-                  
-                  <Link
-                    href={`/shop/${artwork.id}`}
-                    className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors touch-button"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Eye className="h-4 w-4 mr-2" />
-                    View Details
-                  </Link>
-                  
-                  {variant === 'shop' && artwork.available && (
-                    <button
-                      onClick={handleAddToCart}
-                      className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors touch-button"
-                    >
-                      <ShoppingCart className="h-4 w-4 mr-2" />
-                      Add to Cart
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
+            )} */}
+          </>
         )}
         
         {/* Featured badge */}
@@ -328,16 +295,14 @@ export default function ArtCard({
             )}
           </div>
           
-          {/* Quick action in card footer for mobile */}
-          {variant === 'shop' && artwork.available && (
-            <Button
-              onClick={handleAddToCart}
-              size="sm"
-              className="px-3 md:hidden touch-button"
-            >
-              <ShoppingCart className="h-4 w-4" />
-            </Button>
-          )}
+          {/* Quick view link */}
+          <Link
+            href={`/shop/${artwork.id}`}
+            onClick={(e) => e.stopPropagation()}
+            className="text-purple-600 hover:text-purple-700 transition-colors text-sm font-medium"
+          >
+            <Eye className="h-4 w-4" />
+          </Link>
         </div>
       </div>
     </Card>

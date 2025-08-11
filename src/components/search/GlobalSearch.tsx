@@ -15,52 +15,31 @@ interface GlobalSearchProps {
 }
 
 export default function GlobalSearch({ onClose }: GlobalSearchProps) {
-  const [isOpen, setIsOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const { searchTerm, setSearchTerm, filteredArtworks, hasResults } = useSearch(sampleArtworks);
 
   useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
+  // Handle escape key
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setIsOpen(true);
-      }
       if (e.key === 'Escape') {
-        setIsOpen(false);
-        setSearchTerm('');
+        handleClose();
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [setSearchTerm]);
-
-  useEffect(() => {
-    if (isOpen && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isOpen]);
+  }, []);
 
   const handleClose = () => {
-    setIsOpen(false);
     setSearchTerm('');
     onClose?.();
   };
-
-  if (!isOpen) {
-    return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200"
-      >
-        <Search className="h-4 w-4" />
-        <span className="hidden sm:inline">Search artworks...</span>
-        <kbd className="hidden sm:inline-flex items-center px-2 py-1 text-xs font-mono bg-white border rounded">
-          ⌘K
-        </kbd>
-      </button>
-    );
-  }
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">

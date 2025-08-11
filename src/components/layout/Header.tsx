@@ -55,6 +55,19 @@ export default function Header() {
     };
   }, [isMenuOpen]);
 
+  // Handle keyboard shortcut for search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setShowSearch(true);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   return (
     <>
       <header 
@@ -103,11 +116,27 @@ export default function Header() {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              {/* Search Button */}
+            <div className="flex items-center space-x-1 sm:space-x-2">
+              {/* Enhanced Search Button */}
               <button
                 onClick={() => setShowSearch(true)}
-                className="p-2 text-gray-700 hover:text-purple-600 transition-colors duration-200 hidden sm:block"
+                className="group relative overflow-hidden rounded-lg border border-gray-200 bg-white/80 backdrop-blur-sm px-3 py-2 text-sm text-gray-600 shadow-sm transition-all duration-200 hover:border-purple-300 hover:bg-white hover:text-purple-600 hover:shadow-md focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 hidden sm:flex items-center gap-2"
+                aria-label="Search artworks"
+              >
+                <Search className="h-4 w-4 transition-colors duration-200" />
+                <span className="hidden md:inline font-medium">Search</span>
+                <kbd className="hidden lg:inline-flex items-center px-1.5 py-0.5 text-xs font-mono bg-gray-100 border border-gray-200 rounded group-hover:bg-purple-50 group-hover:border-purple-200 transition-colors duration-200">
+                  ⌘K
+                </kbd>
+                
+                {/* Subtle gradient overlay on hover */}
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-pink-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+              </button>
+
+              {/* Mobile Search Button */}
+              <button
+                onClick={() => setShowSearch(true)}
+                className="p-2 text-gray-700 hover:text-purple-600 transition-colors duration-200 sm:hidden"
                 aria-label="Search"
               >
                 <Search className="h-5 w-5" />

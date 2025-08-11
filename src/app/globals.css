@@ -174,6 +174,23 @@
     animation: marquee-reverse 40s linear infinite;
   }
 
+  /* New artistic loading animations */
+  .animate-spin-slow {
+    animation: spin 3s linear infinite;
+  }
+
+  .animate-spin-reverse {
+    animation: spin-reverse 4s linear infinite;
+  }
+
+  .animate-blob {
+    animation: blob 7s infinite;
+  }
+
+  .animate-gradient {
+    animation: gradient-shift 6s ease-in-out infinite;
+  }
+
   /* Mobile-specific utilities */
   .safe-top {
     padding-top: env(safe-area-inset-top);
@@ -216,6 +233,7 @@
   }
 }
 
+/* Keyframes */
 @keyframes float {
   0%, 100% {
     transform: translateY(0px);
@@ -287,274 +305,46 @@
   }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  @apply bg-slate-100;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-gradient-to-b from-purple-400 to-pink-400 rounded-full;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply from-purple-500 to-pink-500;
-}
-
-/* Mobile-specific improvements */
-@media (max-width: 768px) {
-  /* Reduce motion for better performance on mobile */
-  .hover-lift {
-    @apply hover:translate-y-0 hover:shadow-lg;
+/* New artistic loading animations */
+@keyframes spin-reverse {
+  from {
+    transform: rotate(360deg);
   }
-  
-  /* Optimize font sizes for mobile reading */
-  .mobile-optimize {
-    font-size: clamp(0.875rem, 2.5vw, 1rem);
-    line-height: 1.6;
-  }
-  
-  /* Better mobile spacing */
-  .section-padding {
-    @apply py-12;
-  }
-  
-  /* Mobile-friendly hero text */
-  .hero-text {
-    font-size: clamp(2rem, 8vw, 4rem);
-    line-height: 1.1;
+  to {
+    transform: rotate(0deg);
   }
 }
 
-@media (min-width: 769px) {
-  .section-padding {
-    @apply py-20;
-  }
-  
-  .hero-text {
-    font-size: clamp(3rem, 6vw, 7rem);
-  }
-}
-
-/* Dark mode support (future enhancement) */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  ::before,
-  ::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* High contrast support */
-@media (prefers-contrast: high) {
-  .glass-effect {
-    @apply bg-white border-gray-400;
-  }
-  
-  .artistic-gradient {
-    @apply bg-white;
-  }
-}
-
-/* Print styles */
-@media print {
-  .no-print {
-    display: none !important;
-  }
-  
-  * {
-    color: black !important;
-    background: white !important;
-  }
-}
-
-/* Focus styles for better accessibility */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-/* Skip to content link */
-.skip-link {
-  @apply absolute -top-10 left-4 bg-purple-600 text-white px-4 py-2 rounded-md z-50 focus:top-4 transition-all duration-200;
-}
-
-/* Improved form validation styles */
-.form-error {
-  @apply border-red-500 focus:border-red-500 focus:ring-red-500/20;
-}
-
-.form-success {
-  @apply border-green-500 focus:border-green-500 focus:ring-green-500/20;
-}
-
-/* Loading states */
-.loading-shimmer {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite;
-}
-
-@keyframes shimmer {
+@keyframes blob {
   0% {
-    background-position: -200% 0;
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
   }
   100% {
-    background-position: 200% 0;
+    transform: translate(0px, 0px) scale(1);
   }
 }
 
-/* Mobile safari fixes */
-@supports (-webkit-touch-callout: none) {
-  .mobile-safari-fix {
-    /* Fix for viewport height on mobile Safari */
-    min-height: -webkit-fill-available;
-  }
-}
-
-/* Android chrome fixes */
-@media screen and (max-width: 767px) {
-  .android-chrome-fix {
-    /* Fix for Chrome on Android address bar */
-    min-height: calc(100vh - env(keyboard-inset-height, 0px));
-  }
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-  
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-  
-  .animate-fade-in {
-    animation: fadeIn 0.6s ease-out forwards;
-  }
-  
-  .animate-slide-up {
-    animation: slideUp 0.8s ease-out forwards;
-  }
-
-  .animate-marquee {
-    animation: marquee 40s linear infinite;
-  }
-
-  .animate-marquee-reverse {
-    animation: marquee-reverse 40s linear infinite;
-  }
-
-  /* Mobile-specific utilities */
-  .safe-top {
-    padding-top: env(safe-area-inset-top);
-  }
-
-  .safe-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-
-  .safe-left {
-    padding-left: env(safe-area-inset-left);
-  }
-
-  .safe-right {
-    padding-right: env(safe-area-inset-right);
-  }
-
-  /* Scroll snap for mobile carousels */
-  .scroll-snap-x {
-    scroll-snap-type: x mandatory;
-  }
-
-  .scroll-snap-start {
-    scroll-snap-align: start;
-  }
-
-  /* Mobile touch feedback */
-  .touch-feedback {
-    @apply active:scale-95 transition-transform duration-150;
-  }
-
-  /* Hide scrollbars but keep functionality */
-  .hide-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
-  .hide-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-}
-
-@keyframes float {
+@keyframes gradient-shift {
   0%, 100% {
-    transform: translateY(0px);
+    background-position: 0% 50%;
   }
   50% {
-    transform: translateY(-10px);
+    background-position: 100% 50%;
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes marquee {
+@keyframes shimmer {
   0% {
-    transform: translateX(0);
+    background-position: -200% 0;
   }
   100% {
-    transform: translateX(-50%);
-  }
-}
-
-@keyframes marquee-reverse {
-  0% {
-    transform: translateX(-50%);
-  }
-  100% {
-    transform: translateX(0);
+    background-position: 200% 0;
   }
 }
 
@@ -686,15 +476,6 @@
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
 }
 
 /* Mobile safari fixes */

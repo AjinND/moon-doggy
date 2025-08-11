@@ -53,16 +53,18 @@ export function useWishlist() {
       console.log('Adding to wishlist:', artwork.title);
       const newWishlist = [...prev, artwork];
       
-      // Show success feedback
-      if (typeof window !== 'undefined' && window.dispatchEvent) {
-        window.dispatchEvent(new CustomEvent('wishlist-updated', {
-          detail: { 
-            action: 'added', 
-            artwork: artwork.title,
-            count: newWishlist.length 
-          }
-        }));
-      }
+      // Show success feedback - dispatch event for toast ONLY ONCE
+      setTimeout(() => {
+        if (typeof window !== 'undefined' && window.dispatchEvent) {
+          window.dispatchEvent(new CustomEvent('wishlist-updated', {
+            detail: { 
+              action: 'added', 
+              artwork: artwork.title,
+              count: newWishlist.length 
+            }
+          }));
+        }
+      }, 0);
       
       return newWishlist;
     });
@@ -76,16 +78,18 @@ export function useWishlist() {
       if (itemToRemove) {
         console.log('Removing from wishlist:', itemToRemove.title);
         
-        // Show removal feedback
-        if (typeof window !== 'undefined' && window.dispatchEvent) {
-          window.dispatchEvent(new CustomEvent('wishlist-updated', {
-            detail: { 
-              action: 'removed', 
-              artwork: itemToRemove.title,
-              count: newWishlist.length 
-            }
-          }));
-        }
+        // Show removal feedback - dispatch event for toast ONLY ONCE
+        setTimeout(() => {
+          if (typeof window !== 'undefined' && window.dispatchEvent) {
+            window.dispatchEvent(new CustomEvent('wishlist-updated', {
+              detail: { 
+                action: 'removed', 
+                artwork: itemToRemove.title,
+                count: newWishlist.length 
+              }
+            }));
+          }
+        }, 0);
       }
       
       return newWishlist;
