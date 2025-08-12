@@ -4,10 +4,10 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { ArrowRight, Play, Pause, ChevronLeft, ChevronRight } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { sampleArtist, sampleArtworks } from '@/lib/data';
+import LoadingLink from '../ui/LoadingLink';
 
 export default function Hero() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -103,16 +103,16 @@ export default function Hero() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8 sm:mb-12 px-4">
             <Button size="lg" asChild className="w-full sm:w-auto">
-              <Link href="/gallery">
+              <LoadingLink href="/gallery">
                 Explore Gallery
                 <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
+              </LoadingLink>
             </Button>
             
             <Button variant="artistic" size="lg" asChild className="w-full sm:w-auto">
-              <Link href="/shop">
+              <LoadingLink href="/shop">
                 Shop Artworks
-              </Link>
+              </LoadingLink>
             </Button>
           </div>
 

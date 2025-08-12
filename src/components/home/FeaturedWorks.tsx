@@ -1,7 +1,7 @@
 // src/components/home/FeaturedWorks.tsx
 
 import Image from 'next/image';
-import Link from 'next/link';
+import LoadingLink from '@/components/ui/LoadingLink';
 import { ArrowRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -58,11 +58,11 @@ export default function FeaturedWorks() {
                   <span className="text-2xl font-bold text-purple-600">
                     {formatPrice(artwork.price)}
                   </span>
-                  <Link href={`/shop/${artwork.id}`}>
+                  <LoadingLink href={`/shop/${artwork.id}`}>
                     <Button size="sm" variant="outline">
                       View Details
                     </Button>
-                  </Link>
+                  </LoadingLink>
                 </div>
               </CardContent>
             </Card>
@@ -71,14 +71,13 @@ export default function FeaturedWorks() {
 
         <div className="text-center">
           <Button size="lg" asChild>
-            <Link href="/gallery">
+            <LoadingLink href="/gallery">
               View All Artworks
               <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
+            </LoadingLink>
           </Button>
         </div>
       </div>
     </section>
   );
 }
-

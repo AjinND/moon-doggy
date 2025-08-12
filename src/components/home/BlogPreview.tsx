@@ -1,4 +1,5 @@
-import Link from 'next/link';
+// src/components/home/BlogPreview.tsx
+import LoadingLink from '@/components/ui/LoadingLink';
 import Image from 'next/image';
 import { formatDistanceToNow } from 'date-fns';
 import { BlogPost } from '@/lib/types';
@@ -6,21 +7,20 @@ import { BlogPost } from '@/lib/types';
 interface BlogPreviewProps {
   posts: BlogPost[];
 }
-
 export default function BlogPreview({ posts }: BlogPreviewProps) {
   return (
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900">Latest from the Blog</h2>
-          <Link href="/blog" className="text-blue-600 hover:text-blue-800 font-medium">
+          <LoadingLink href="/blog" className="text-blue-600 hover:text-blue-800 font-medium">
             View All Posts →
-          </Link>
+          </LoadingLink>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {posts.map((post) => (
             <article key={post.id} className="group">
-              <Link href={`/blog/${post.slug}`} className="block">
+              <LoadingLink href={`/blog/${post.slug}`} className="block">
                 <div className="relative h-48 mb-4 overflow-hidden rounded-lg">
                   <Image
                     src={post.imageUrl}
@@ -58,7 +58,7 @@ export default function BlogPreview({ posts }: BlogPreviewProps) {
                     <span>{post.readTime} min read</span>
                   </div>
                 </div>
-              </Link>
+              </LoadingLink>
             </article>
           ))}
         </div>

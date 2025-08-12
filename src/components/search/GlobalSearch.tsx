@@ -1,14 +1,14 @@
 // src/components/search/GlobalSearch.tsx
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { Search, X } from 'lucide-react';
 import { useSearch } from '@/hooks/useSearch';
 import { sampleArtworks } from '@/lib/data';
 import { formatPrice } from '@/lib/utils';
 import ImageWithLoading from '@/components/ui/ImageWithLoading';
 import { Card } from '@/components/ui/Card';
-import Link from 'next/link';
+import LoadingLink from '../ui/LoadingLink';
 
 interface GlobalSearchProps {
   onClose?: () => void;
@@ -80,7 +80,7 @@ export default function GlobalSearch({ onClose }: GlobalSearchProps) {
                       Found {filteredArtworks.length} artwork{filteredArtworks.length !== 1 ? 's' : ''}
                     </p>
                     {filteredArtworks.slice(0, 6).map((artwork) => (
-                      <Link
+                      <LoadingLink
                         key={artwork.id}
                         href={`/shop/${artwork.id}`}
                         onClick={handleClose}
@@ -107,16 +107,16 @@ export default function GlobalSearch({ onClose }: GlobalSearchProps) {
                             {formatPrice(artwork.price)}
                           </div>
                         )}
-                      </Link>
+                      </LoadingLink>
                     ))}
                     {filteredArtworks.length > 6 && (
-                      <Link
+                      <LoadingLink
                         href={`/shop?search=${encodeURIComponent(searchTerm)}`}
                         onClick={handleClose}
                         className="block text-center py-2 text-purple-600 hover:text-purple-700 font-medium"
                       >
                         View all {filteredArtworks.length} results
-                      </Link>
+                      </LoadingLink>
                     )}
                   </div>
                 ) : (
@@ -155,7 +155,7 @@ export default function GlobalSearch({ onClose }: GlobalSearchProps) {
                   <h3 className="text-sm font-medium text-gray-900 mb-3">Featured Artworks</h3>
                   <div className="space-y-2">
                     {sampleArtworks.filter(a => a.featured).slice(0, 3).map((artwork) => (
-                      <Link
+                      <LoadingLink
                         key={artwork.id}
                         href={`/shop/${artwork.id}`}
                         onClick={handleClose}
@@ -175,7 +175,7 @@ export default function GlobalSearch({ onClose }: GlobalSearchProps) {
                           </h4>
                           <p className="text-xs text-gray-600">{artwork.medium}</p>
                         </div>
-                      </Link>
+                      </LoadingLink>
                     ))}
                   </div>
                 </div>

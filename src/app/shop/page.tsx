@@ -12,7 +12,7 @@ import ErrorBoundary from '@/components/ui/ErrorBoundary';
 import { sampleArtworks } from '@/lib/data';
 import { ArtCategory } from '@/lib/types';
 import { useWishlist } from '@/hooks/useWishlist';
-import Link from 'next/link';
+import LoadingLink from '@/components/ui/LoadingLink';
 
 export default function ShopPage() {
   const [selectedCategory, setSelectedCategory] = useState<ArtCategory | 'all'>('all');
@@ -89,7 +89,7 @@ export default function ShopPage() {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
                 {/* Wishlist Link */}
                 {wishlist.length > 0 && (
-                  <Link 
+                  <LoadingLink 
                     href="/wishlist" 
                     className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-purple-200 hover:border-purple-300 transition-colors touch-button"
                   >
@@ -97,7 +97,7 @@ export default function ShopPage() {
                     <span className="text-purple-600 hover:text-purple-700 font-medium">
                       {wishlist.length} item{wishlist.length !== 1 ? 's' : ''} in wishlist
                     </span>
-                  </Link>
+                  </LoadingLink>
                 )}
                 
                 {/* Available Artworks Count */}
@@ -276,9 +276,9 @@ export default function ShopPage() {
                       Clear Filters
                     </Button>
                     <Button asChild>
-                      <Link href="/gallery">
+                      <LoadingLink href="/gallery">
                         Browse Gallery
-                      </Link>
+                      </LoadingLink>
                     </Button>
                   </div>
                 </div>

@@ -3,12 +3,10 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import {
   ArrowLeft,
   Heart,
   Share2,
-  ShoppingCart,
   Truck,
   Shield,
   RotateCcw,
@@ -16,16 +14,15 @@ import {
   Palette,
   Calendar,
   Eye,
-  Star,
   MessageCircle,
 } from "lucide-react";
 import { Artwork } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
-import Button from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { useCart } from "@/hooks/useCart";
 import AddToCart from "./AddToCart";
 import { sampleArtworks } from "@/lib/data";
+import LoadingLink from "../ui/LoadingLink";
 
 interface ProductDetailProps {
   artwork: Artwork;
@@ -68,12 +65,12 @@ export default function ProductDetail({ artwork }: ProductDetailProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-gray-600 mb-8">
-          <Link
+          <LoadingLink
             href="/shop"
             className="hover:text-purple-600 transition-colors"
           >
             Shop
-          </Link>
+          </LoadingLink>
           <span>/</span>
           <span className="text-gray-900">{artwork.title}</span>
         </div>
@@ -317,13 +314,13 @@ export default function ProductDetail({ artwork }: ProductDetailProps) {
                         collection, showcasing her unique approach to{" "}
                         {artwork.category.replace("-", " ")}.
                       </p>
-                      <Link
+                      <LoadingLink
                         href="/about"
                         className="inline-flex items-center text-purple-600 hover:text-purple-700 font-medium"
                       >
                         Learn more about the artist
                         <ArrowLeft className="ml-1 h-4 w-4 rotate-180" />
-                      </Link>
+                      </LoadingLink>
                     </div>
                   </CardContent>
                 </Card>
@@ -432,7 +429,7 @@ export default function ProductDetail({ artwork }: ProductDetailProps) {
               )
               .slice(0, 4)
               .map((relatedArtwork) => (
-                <Link
+                <LoadingLink
                   key={relatedArtwork.id}
                   href={`/shop/${relatedArtwork.id}`}
                 >
@@ -457,7 +454,7 @@ export default function ProductDetail({ artwork }: ProductDetailProps) {
                       </p>
                     </CardContent>
                   </Card>
-                </Link>
+                </LoadingLink>
               ))}
           </div>
         </div>

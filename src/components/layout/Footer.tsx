@@ -2,10 +2,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from "next/link";
 import { Instagram, Mail, MapPin, Phone, Twitter, ChevronUp, ChevronDown } from "lucide-react";
 import { sampleArtist } from "@/lib/data";
 import ErrorBoundary from "../ui/ErrorBoundary";
+import LoadingLink from '../ui/LoadingLink';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -108,13 +108,13 @@ export default function Footer() {
                       { name: 'Blog', href: '/blog' },
                       { name: 'Contact', href: '/contact' }
                     ].map((link) => (
-                      <Link
+                      <LoadingLink 
                         key={link.name}
                         href={link.href}
                         className="text-sm text-gray-300 hover:text-white hover:translate-x-1 transition-all duration-300 py-1 transform"
                       >
                         {link.name}
-                      </Link>
+                      </LoadingLink >
                     ))}
                   </div>
                 )}
@@ -141,13 +141,13 @@ export default function Footer() {
                       { name: 'Wishlist', href: '/wishlist' },
                       { name: 'Cart', href: '/cart' }
                     ].map((link) => (
-                      <Link
+                      <LoadingLink 
                         key={link.name}
                         href={link.href}
                         className="text-sm text-gray-300 hover:text-white hover:translate-x-1 transition-all duration-300 py-1 transform"
                       >
                         {link.name}
-                      </Link>
+                      </LoadingLink >
                     ))}
                   </div>
                 )}
@@ -174,13 +174,13 @@ export default function Footer() {
                       { name: 'Privacy', href: '/privacy' },
                       { name: 'Terms', href: '/terms' }
                     ].map((link) => (
-                      <Link
+                      <LoadingLink 
                         key={link.name}
                         href={link.href}
                         className="text-sm text-gray-300 hover:text-white hover:translate-x-1 transition-all duration-300 py-1 transform"
                       >
                         {link.name}
-                      </Link>
+                      </LoadingLink >
                     ))}
                   </div>
                 )}
@@ -280,12 +280,12 @@ export default function Footer() {
                   { name: 'Contact', href: '/contact' }
                 ].map((link) => (
                   <li key={link.name}>
-                    <Link
+                    <LoadingLink 
                       href={link.href}
                       className="text-gray-300 hover:text-white hover:translate-x-1 transition-all duration-300 transform inline-block"
                     >
                       {link.name}
-                    </Link>
+                    </LoadingLink >
                   </li>
                 ))}
               </ul>
@@ -304,12 +304,12 @@ export default function Footer() {
                   { name: 'Returns', href: '/returns' }
                 ].map((link) => (
                   <li key={link.name}>
-                    <Link
+                    <LoadingLink 
                       href={link.href}
                       className="text-gray-300 hover:text-white hover:translate-x-1 transition-all duration-300 transform inline-block"
                     >
                       {link.name}
-                    </Link>
+                    </LoadingLink >
                   </li>
                 ))}
               </ul>
@@ -328,12 +328,12 @@ export default function Footer() {
                   { name: 'Sitemap', href: '/sitemap' }
                 ].map((link) => (
                   <li key={link.name}>
-                    <Link
+                    <LoadingLink 
                       href={link.href}
                       className="text-gray-300 hover:text-white hover:translate-x-1 transition-all duration-300 transform inline-block"
                     >
                       {link.name}
-                    </Link>
+                    </LoadingLink >
                   </li>
                 ))}
               </ul>
@@ -416,30 +416,30 @@ export default function Footer() {
               
               {/* Legal links */}
               <div className="flex flex-wrap justify-center items-center gap-4">
-                <Link
+                <LoadingLink 
                   href="/privacy"
                   className="text-xs text-gray-300 hover:text-white hover:scale-105 transition-all duration-300 transform"
                 >
                   Privacy
-                </Link>
-                <Link
+                </LoadingLink >
+                <LoadingLink 
                   href="/terms"
                   className="text-xs text-gray-300 hover:text-white hover:scale-105 transition-all duration-300 transform"
                 >
                   Terms
-                </Link>
-                <Link
+                </LoadingLink >
+                <LoadingLink 
                   href="/cookies"
                   className="text-xs text-gray-300 hover:text-white hover:scale-105 transition-all duration-300 transform"
                 >
                   Cookies
-                </Link>
-                <Link
+                </LoadingLink >
+                <LoadingLink 
                   href="/accessibility"
                   className="text-xs text-gray-300 hover:text-white hover:scale-105 transition-all duration-300 transform"
                 >
                   Accessibility
-                </Link>
+                </LoadingLink >
               </div>
             </div>
           </div>

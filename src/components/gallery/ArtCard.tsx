@@ -11,7 +11,7 @@ import { formatPrice } from '@/lib/utils';
 import { resolveImagePath } from '@/lib/image';
 import { useWishlist } from '@/hooks/useWishlist';
 import { useCart } from '@/hooks/useCart';
-import Link from 'next/link';
+import LoadingLink from '../ui/LoadingLink';
 
 export default function ArtCard({ 
   artwork, 
@@ -165,9 +165,9 @@ export default function ArtCard({
                     </Button>
                     
                     <Button variant="outline" size="sm" asChild className="touch-button">
-                      <Link href={`/shop/${artwork.id}`}>
+                      <LoadingLink href={`/shop/${artwork.id}`}>
                         <Eye className="h-4 w-4" />
-                      </Link>
+                      </LoadingLink>
                     </Button>
                   </div>
                 )}
@@ -296,13 +296,13 @@ export default function ArtCard({
           </div>
           
           {/* Quick view link */}
-          <Link
+          <LoadingLink
             href={`/shop/${artwork.id}`}
             onClick={(e) => e.stopPropagation()}
             className="text-purple-600 hover:text-purple-700 transition-colors text-sm font-medium"
           >
             <Eye className="h-4 w-4" />
-          </Link>
+          </LoadingLink>
         </div>
       </div>
     </Card>

@@ -3,13 +3,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ShoppingBag, Palette, Search, Heart } from 'lucide-react';
+import { X, ShoppingBag, Palette, Search, Heart } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
 import { cn } from '@/lib/utils';
 import GlobalSearch from '@/components/search/GlobalSearch';
+import LoadingLink from '../ui/LoadingLink';
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -81,7 +81,7 @@ export default function Header() {
         <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
-            <Link 
+            <LoadingLink  
               href="/" 
               className="flex items-center space-x-2 group z-10"
             >
@@ -92,12 +92,12 @@ export default function Header() {
               <span className="text-xl font-serif font-bold artistic-text-gradient">
                 Moon Doggy
               </span>
-            </Link>
+            </LoadingLink >
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center space-x-8">
               {navigation.map((item) => (
-                <Link
+                <LoadingLink 
                   key={item.name}
                   href={item.href}
                   className={cn(
@@ -111,7 +111,7 @@ export default function Header() {
                   {pathname === item.href && (
                     <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full"></span>
                   )}
-                </Link>
+                </LoadingLink >
               ))}
             </div>
 
@@ -143,7 +143,7 @@ export default function Header() {
               </button>
 
               {/* Wishlist Icon */}
-              <Link
+              <LoadingLink 
                 href="/wishlist"
                 className="relative p-2 text-gray-700 hover:text-purple-600 transition-colors duration-200 hidden sm:block"
                 aria-label={`Wishlist (${wishlist.length} items)`}
@@ -154,10 +154,10 @@ export default function Header() {
                     {wishlist.length}
                   </span>
                 )}
-              </Link>
+              </LoadingLink >
 
               {/* Cart Icon */}
-              <Link
+              <LoadingLink 
                 href="/cart"
                 className="relative p-2 text-gray-700 hover:text-purple-600 transition-colors duration-200"
                 aria-label={`Shopping cart (${itemCount} items)`}
@@ -168,7 +168,7 @@ export default function Header() {
                     {itemCount}
                   </span>
                 )}
-              </Link>
+              </LoadingLink >
 
               {/* Mobile menu button */}
               <button
@@ -199,13 +199,18 @@ export default function Header() {
           <div className={cn(
             "lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 z-40",
             isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"
-          )} onClick={() => setIsMenuOpen(false)} />
+          )} 
+          onClick={() => setIsMenuOpen(false)}
+          style={{ top: 0, left: 0, right: 0, bottom: 0, position: 'fixed' }}
+          />
 
           {/* Mobile Navigation Menu */}
           <div className={cn(
-            "lg:hidden fixed right-0 top-0 h-full w-80 max-w-[80vw] bg-white shadow-2xl transform transition-transform duration-300 z-50",
+            "lg:hidden fixed right-0 top-0 h-full w-80 max-w-[80vw] bg-white shadow-2xl transform transition-transform duration-300 z-50 overflow-y-auto",
             isMenuOpen ? "translate-x-0" : "translate-x-full"
-          )}>
+          )}
+          style={{ position: 'fixed', top: 0, right: 0, height: '100vh', maxHeight: '100vh' }}
+          >
             <div className="flex flex-col h-full">
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-200">
@@ -223,7 +228,7 @@ export default function Header() {
               <div className="flex-1 py-6">
                 <div className="space-y-1 px-6">
                   {navigation.map((item) => (
-                    <Link
+                    <LoadingLink 
                       key={item.name}
                       href={item.href}
                       onClick={() => setIsMenuOpen(false)}
@@ -235,7 +240,7 @@ export default function Header() {
                       )}
                     >
                       {item.name}
-                    </Link>
+                    </LoadingLink >
                   ))}
                 </div>
 
@@ -253,7 +258,7 @@ export default function Header() {
                       Search Artworks
                     </button>
                     
-                    <Link
+                    <LoadingLink 
                       href="/wishlist"
                       onClick={() => setIsMenuOpen(false)}
                       className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-purple-600 rounded-lg transition-colors"
@@ -267,7 +272,7 @@ export default function Header() {
                           {wishlist.length}
                         </span>
                       )}
-                    </Link>
+                    </LoadingLink >
                   </div>
                 </div>
               </div>

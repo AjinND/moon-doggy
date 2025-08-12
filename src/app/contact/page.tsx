@@ -12,7 +12,6 @@ import { sampleArtist } from '@/lib/data';
 import { validators } from '@/lib/validation';
 
 export default function ContactPage() {
-  const [pageLoading, setPageLoading] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -23,15 +22,6 @@ export default function ContactPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-
-  // Simulate page loading
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setPageLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   const inquiryTypes = [
     { value: 'general', label: 'General Inquiry' },
@@ -87,16 +77,6 @@ export default function ContactPage() {
     setIsSubmitted(true);
     setFormData({ name: '', email: '', subject: '', message: '', inquiryType: 'general' });
   };
-
-  if (pageLoading) {
-    return (
-      <div className="pt-16 min-h-screen bg-gradient-to-r from-purple-50 via-white to-pink-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <Loading size="lg" text="Loading contact information..." />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="pt-16">

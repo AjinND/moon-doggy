@@ -6,6 +6,7 @@ import Footer from '@/components/layout/Footer';
 import './globals.css';
 import { ToastProvider } from "@/components/ui/Toast";
 import ErrorBoundary from '@/components/ui/ErrorBoundary';
+import { NavigationLoadingProvider } from '@/components/providers/NavigationLoadingProvider';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -80,15 +81,17 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <body className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-stone-50 font-sans antialiased">
         <ErrorBoundary>
-          <ToastProvider>
-            <div className="flex min-h-screen flex-col">
-              <Header />
-              <main className="flex-1">
-                {children}
-              </main>
-              <Footer />
-            </div>
-          </ToastProvider>
+          <NavigationLoadingProvider>
+            <ToastProvider>
+              <div className="flex min-h-screen flex-col">
+                <Header />
+                <main className="flex-1">
+                  {children}
+                </main>
+                <Footer />
+              </div>
+            </ToastProvider>
+          </NavigationLoadingProvider>
         </ErrorBoundary>
       </body>
     </html>

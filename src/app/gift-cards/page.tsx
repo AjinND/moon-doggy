@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import GiftCardBuilder from '@/components/gift-cards/GiftCardBuilder';
 import { useGiftCard } from '@/hooks/useGiftCard';
-import { GiftCard } from '@/lib/types';
 
 export default function GiftCardsPage() {
   const router = useRouter();

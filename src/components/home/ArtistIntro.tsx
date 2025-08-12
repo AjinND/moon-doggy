@@ -1,10 +1,10 @@
 // src/components/home/ArtistIntro.tsx
 
 import Image from 'next/image';
-import Link from 'next/link';
+import LoadingLink from '@/components/ui/LoadingLink';
 import { Award, MapPin, Palette } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import { Card, CardContent } from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
 import { sampleArtist } from '@/lib/data';
 
 export default function ArtistIntro() {
@@ -71,14 +71,14 @@ export default function ArtistIntro() {
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" asChild>
-                <Link href="/about">
+                <LoadingLink href="/about">
                   Learn More About Laura
-                </Link>
+                </LoadingLink>
               </Button>
               <Button variant="outline" size="lg" asChild>
-                <Link href="/contact">
+                <LoadingLink href="/contact">
                   Get in Touch
-                </Link>
+                </LoadingLink>
               </Button>
             </div>
           </div>

@@ -1,12 +1,12 @@
 // src/components/wishlist/WishlistSummary.tsx
 'use client';
 
-import Link from 'next/link';
 import { ShoppingCart } from 'lucide-react';
 import { Artwork } from '@/lib/types';
 import { formatPrice } from '@/lib/utils';
 import Button from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
+import LoadingLink from '../ui/LoadingLink';
 
 interface WishlistSummaryProps {
   wishlist: Artwork[];
@@ -42,9 +42,9 @@ export default function WishlistSummary({ wishlist, onAddAllToCart }: WishlistSu
           
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <Button variant="outline" asChild className="w-full sm:w-auto">
-              <Link href="/shop">
+              <LoadingLink href="/shop">
                 Continue Shopping
-              </Link>
+              </LoadingLink>
             </Button>
             
             {availableItems.length > 0 && (
@@ -70,9 +70,9 @@ export default function WishlistSummary({ wishlist, onAddAllToCart }: WishlistSu
             )}
             
             <Button asChild className="w-full sm:w-auto">
-              <Link href="/cart">
+              <LoadingLink href="/cart">
                 View Cart
-              </Link>
+              </LoadingLink>
             </Button>
           </div>
         </div>

@@ -6,9 +6,17 @@ interface LoadingProps {
   size?: 'sm' | 'md' | 'lg';
   text?: string;
   variant?: 'default' | 'artistic' | 'minimal';
+  progress?: number; // Progress percentage (0-100)
+  showProgress?: boolean; // Whether to show progress bar
 }
 
-export default function Loading({ size = 'md', text, variant = 'artistic' }: LoadingProps) {
+export default function Loading({ 
+  size = 'md', 
+  text, 
+  variant = 'artistic', 
+  progress = 0, 
+  showProgress = false 
+}: LoadingProps) {
   const sizeClasses = {
     sm: 'h-16 w-16',
     md: 'h-24 w-24', 
@@ -26,6 +34,14 @@ export default function Loading({ size = 'md', text, variant = 'artistic' }: Loa
       <div className="flex flex-col items-center justify-center py-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
         {text && <p className="text-gray-600 text-sm mt-2">{text}</p>}
+        {showProgress && (
+          <div className="w-48 h-1 bg-gray-200 rounded-full mt-4 overflow-hidden">
+            <div 
+              className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-300 ease-out"
+              style={{ width: `${Math.max(0, Math.min(100, progress))}%` }}
+            />
+          </div>
+        )}
       </div>
     );
   }
@@ -84,6 +100,28 @@ export default function Loading({ size = 'md', text, variant = 'artistic' }: Loa
           </div>
         </div>
 
+        {/* Progress Bar */}
+        {showProgress && (
+          <div className="w-64 h-2 bg-white/20 rounded-full mb-4 overflow-hidden backdrop-blur-sm">
+            <div 
+              className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-amber-500 transition-all duration-500 ease-out relative"
+              style={{ width: `${Math.max(0, Math.min(100, progress))}%` }}
+            >
+              {/* Shimmer effect on progress bar */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
+            </div>
+          </div>
+        )}
+
+        {/* Progress Percentage */}
+        {showProgress && (
+          <div className="text-center mb-4">
+            <span className="text-sm font-medium bg-gradient-to-r from-purple-600 via-pink-600 to-amber-600 bg-clip-text text-transparent">
+              {Math.round(progress)}%
+            </span>
+          </div>
+        )}
+
         {/* Animated text with artistic styling */}
         {text && (
           <div className="text-center max-w-sm">
@@ -115,6 +153,14 @@ export default function Loading({ size = 'md', text, variant = 'artistic' }: Loa
     <div className="flex flex-col items-center justify-center py-8">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mb-4"></div>
       {text && <p className="text-gray-600 text-sm">{text}</p>}
+      {showProgress && (
+        <div className="w-48 h-1 bg-gray-200 rounded-full mt-4 overflow-hidden">
+          <div 
+            className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-300 ease-out"
+            style={{ width: `${Math.max(0, Math.min(100, progress))}%` }}
+          />
+        </div>
+      )}
     </div>
   );
 }

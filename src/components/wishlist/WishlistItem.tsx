@@ -2,12 +2,12 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { Heart, Share2, ShoppingCart } from 'lucide-react';
 import { Artwork } from '@/lib/types';
 import { formatPrice } from '@/lib/utils';
 import Button from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
+import LoadingLink from '../ui/LoadingLink';
 
 interface WishlistItemProps {
   artwork: Artwork;
@@ -35,7 +35,7 @@ export default function WishlistItem({
         <CardContent className="p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Image */}
-            <Link 
+            <LoadingLink 
               href={`/shop/${artwork.id}`}
               className="relative aspect-square sm:w-32 sm:h-32 flex-shrink-0 group"
             >
@@ -45,16 +45,16 @@ export default function WishlistItem({
                 fill
                 className="object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
               />
-            </Link>
+            </LoadingLink>
 
             {/* Content */}
             <div className="flex-1 min-w-0">
               <div className="flex justify-between items-start mb-2">
-                <Link href={`/shop/${artwork.id}`}>
+                <LoadingLink href={`/shop/${artwork.id}`}>
                   <h3 className="text-lg font-serif font-semibold text-gray-900 hover:text-purple-600 transition-colors">
                     {artwork.title}
                   </h3>
-                </Link>
+                </LoadingLink>
                 <button
                   onClick={onRemove}
                   className="text-gray-400 hover:text-red-500 transition-colors p-1 touch-button"
@@ -119,14 +119,14 @@ export default function WishlistItem({
       style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
     >
       <div className="relative aspect-square overflow-hidden rounded-t-xl">
-        <Link href={`/shop/${artwork.id}`}>
+        <LoadingLink href={`/shop/${artwork.id}`}>
           <Image
             src={artwork.imageUrl}
             alt={artwork.title}
             fill
             className="object-cover group-hover:scale-110 transition-transform duration-500"
           />
-        </Link>
+        </LoadingLink>
         
         {/* Remove from Wishlist */}
         <button
@@ -169,11 +169,11 @@ export default function WishlistItem({
       </div>
       
       <CardContent className="p-4">
-        <Link href={`/shop/${artwork.id}`}>
+        <LoadingLink href={`/shop/${artwork.id}`}>
           <h3 className="font-serif font-semibold text-gray-900 mb-1 line-clamp-1 hover:text-purple-600 transition-colors">
             {artwork.title}
           </h3>
-        </Link>
+        </LoadingLink>
         <p className="text-sm text-gray-600 mb-2">{artwork.medium}</p>
         <p className="text-sm text-gray-700 mb-3 line-clamp-2">{artwork.description}</p>
         

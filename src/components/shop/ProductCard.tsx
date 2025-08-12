@@ -1,7 +1,6 @@
 // src/components/shop/ProductCard.tsx
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Heart, ShoppingCart, Eye } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/Card';
@@ -10,6 +9,7 @@ import { Artwork } from '@/lib/types';
 import { formatPrice } from '@/lib/utils';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
+import LoadingLink from '../ui/LoadingLink';
 
 interface ProductCardProps {
   artwork: Artwork;
@@ -36,7 +36,7 @@ export default function ProductCard({ artwork, viewMode, index }: ProductCardPro
         className={`animate-fade-in opacity-0`}
         style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
       >
-        <Link href={`/shop/${artwork.id}`}>
+        <LoadingLink href={`/shop/${artwork.id}`}>
           <div className="flex flex-col sm:flex-row">
             <div className="relative aspect-square sm:w-48 sm:h-48 flex-shrink-0">
               <Image
@@ -99,7 +99,7 @@ export default function ProductCard({ artwork, viewMode, index }: ProductCardPro
               </div>
             </CardContent>
           </div>
-        </Link>
+        </LoadingLink>
       </Card>
     );
   }
@@ -111,7 +111,7 @@ export default function ProductCard({ artwork, viewMode, index }: ProductCardPro
       className={`group animate-fade-in opacity-0`}
       style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
     >
-      <Link href={`/shop/${artwork.id}`}>
+      <LoadingLink href={`/shop/${artwork.id}`}>
         <div className="relative aspect-square overflow-hidden rounded-t-xl">
           <Image
             src={artwork.imageUrl}
@@ -181,7 +181,7 @@ export default function ProductCard({ artwork, viewMode, index }: ProductCardPro
             </div>
           </div>
         </CardContent>
-      </Link>
+      </LoadingLink>
     </Card>
   );
 }

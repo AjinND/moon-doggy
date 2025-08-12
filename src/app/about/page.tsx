@@ -1,37 +1,13 @@
 // src/app/about/page.tsx
-'use client';
 
-import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
-import { MapPin, Award, GraduationCap, Calendar, Mail, Instagram } from 'lucide-react';
+import LoadingLink from '@/components/ui/LoadingLink';
+import { MapPin, Award, GraduationCap, Calendar } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
-import Loading from '@/components/ui/Loading';
 import { sampleArtist } from '@/lib/data';
 
 export default function AboutPage() {
-  const [loading, setLoading] = useState(true);
-
-  // Simulate loading
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1500);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="pt-16 min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <Loading size="lg" text="Loading artist information..." />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="pt-16">
       {/* Hero Section */}
@@ -77,10 +53,10 @@ export default function AboutPage() {
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button size="lg" asChild>
-                  <Link href="/contact">Get in Touch</Link>
+                  <LoadingLink href="/contact">Get in Touch</LoadingLink>
                 </Button>
                 <Button variant="outline" size="lg" asChild>
-                  <Link href="/gallery">View Portfolio</Link>
+                  <LoadingLink href="/gallery">View Portfolio</LoadingLink>
                 </Button>
               </div>
             </div>
@@ -262,10 +238,10 @@ export default function AboutPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" variant="outline" className="bg-white text-purple-600 hover:bg-gray-50">
-              <Link href="/gallery">Explore Gallery</Link>
+              <LoadingLink href="/gallery">Explore Gallery</LoadingLink>
             </Button>
             <Button size="lg" className="bg-white/20 text-white border-white hover:bg-white/30">
-              <Link href="/shop">Shop Artworks</Link>
+              <LoadingLink href="/shop">Shop Artworks</LoadingLink>
             </Button>
           </div>
         </div>

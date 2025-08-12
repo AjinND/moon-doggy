@@ -3,7 +3,6 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { Heart, Share2, ShoppingCart, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Artwork } from '@/lib/types';
 import { formatPrice } from '@/lib/utils';
@@ -11,6 +10,7 @@ import Button from '@/components/ui/Button';
 import ImageWithLoading from '@/components/ui/ImageWithLoading';
 import { useWishlist } from '@/hooks/useWishlist';
 import { useCart } from '@/hooks/useCart';
+import LoadingLink from '../ui/LoadingLink';
 
 interface ArtworkDetailModalProps {
   artwork: Artwork;
@@ -217,12 +217,12 @@ export default function ArtworkDetailModal({ artwork, onClose }: ArtworkDetailMo
               </Button>
             </div>
             
-            <Link 
+            <LoadingLink 
               href={`/shop/${artwork.id}`}
               className="block mt-3 text-center text-sm text-purple-600 hover:text-purple-700 transition-colors"
             >
               View full details in shop →
-            </Link>
+            </LoadingLink>
           </div>
         )}
         

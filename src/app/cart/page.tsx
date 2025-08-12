@@ -4,13 +4,13 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { ArrowLeft, Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
 import Input from '@/components/ui/Input';
 import { useCart } from '@/hooks/useCart';
 import { formatPrice } from '@/lib/utils';
+import LoadingLink from '@/components/ui/LoadingLink';
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, clearCart } = useCart();
@@ -32,9 +32,9 @@ export default function CartPage() {
             Discover beautiful artworks and add them to your collection.
           </p>
           <Button size="lg" asChild>
-            <Link href="/shop">
+            <LoadingLink href="/shop">
               Continue Shopping
-            </Link>
+            </LoadingLink>
           </Button>
         </div>
       </div>
@@ -47,9 +47,9 @@ export default function CartPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center">
-            <Link href="/shop" className="text-purple-600 hover:text-purple-700 mr-4">
+            <LoadingLink href="/shop" className="text-purple-600 hover:text-purple-700 mr-4">
               <ArrowLeft className="h-6 w-6" />
-            </Link>
+            </LoadingLink>
             <h1 className="text-3xl font-serif font-bold text-gray-900">Shopping Cart</h1>
           </div>
           <Button variant="ghost" onClick={clearCart} className="text-red-600 hover:text-red-700">
@@ -181,9 +181,9 @@ export default function CartPage() {
                 </Button>
 
                 <div className="mt-4 text-center">
-                  <Link href="/shop" className="text-purple-600 hover:text-purple-700 text-sm">
+                  <LoadingLink href="/shop" className="text-purple-600 hover:text-purple-700 text-sm">
                     Continue Shopping
-                  </Link>
+                  </LoadingLink>
                 </div>
               </CardContent>
             </Card>
