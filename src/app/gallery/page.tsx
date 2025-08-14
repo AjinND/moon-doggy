@@ -1,7 +1,7 @@
 // src/app/gallery/page.tsx
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { Search, Grid, List, SlidersHorizontal } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
@@ -26,18 +26,20 @@ export default function GalleryPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [loading, setLoading] = useState(true);
   const [artworks, setArtworks] = useState<Artwork[]>([]);
+  const [cardsRendered, setCardsRendered] = useState(false);
+  const galleryRef = useRef<HTMLDivElement>(null);
 
   const categories: (ArtCategory | 'all')[] = [
     'all', 'paintings', 'drawings', 'sculptures', 'digital', 'mixed-media', 'photography'
   ];
 
-  // Simulate data loading
+  // Load artworks data
   useEffect(() => {
     const loadArtworks = async () => {
       setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 800));
       setArtworks(sampleArtworks);
-      setLoading(false);
     };
 
     loadArtworks();
@@ -60,6 +62,69 @@ export default function GalleryPage() {
     });
   }, [artworks, searchTerm, selectedCategory, priceRange, availableOnly, featuredOnly]);
 
+  // Check when cards are rendered and visible
+  useEffect(() => {
+    if (artworks.length > 0 && !cardsRendered) {
+      // Use intersection observer to detect when cards are visible
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const visibleCards = entries.filter(entry => entry.isIntersecting);
+          // If at least 3 cards are visible or all cards are visible, consider loading complete
+          if (visibleCards.length >= Math.min(3, filteredArtworks.length) && filteredArtworks.length > 0) {
+            setCardsRendered(true);
+            setLoading(false);
+            observer.disconnect();
+          }
+        },
+        {
+          threshold: 0.1,
+          rootMargin: '50px'
+        }
+      );
+
+      // Wait a bit for DOM to render, then observe
+      const timer = setTimeout(() => {
+        const cardElements = galleryRef.current?.querySelectorAll('[data-artwork-card]');
+        if (cardElements && cardElements.length > 0) {
+          cardElements.forEach(card => observer.observe(card));
+        } else if (filteredArtworks.length === 0) {
+          // If no artworks to show, stop loading immediately
+          setCardsRendered(true);
+          setLoading(false);
+        }
+      }, 100);
+
+      return () => {
+        clearTimeout(timer);
+        observer.disconnect();
+      };
+    }
+  }, [artworks, filteredArtworks.length, cardsRendered]);
+
+  // Reset cards rendered state when filters change
+  useEffect(() => {
+    if (artworks.length > 0) {
+      setCardsRendered(false);
+      setLoading(true);
+    }
+  }, [searchTerm, selectedCategory, priceRange, availableOnly, featuredOnly]);
+
+  // Fallback: If cards don't load within reasonable time, stop loading
+  useEffect(() => {
+    if (artworks.length > 0 && loading) {
+      const fallbackTimer = setTimeout(() => {
+        setCardsRendered(true);
+        setLoading(false);
+      }, 3000); // 3 second fallback
+
+      return () => clearTimeout(fallbackTimer);
+    }
+  }, [artworks.length, loading]);
+
+  const hasActiveFilters = selectedCategory !== 'all' || 
+    priceRange[0] > 0 || priceRange[1] < 3000 || 
+    availableOnly || featuredOnly;
+
   if (loading) {
     return (
       <div className="pt-16">
@@ -75,15 +140,11 @@ export default function GalleryPage() {
           </div>
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <Loading size="lg" text="Loading gallery..." />
+          <Loading size="lg" text="Loading gallery..." variant="artistic" />
         </div>
       </div>
     );
   }
-
-  const hasActiveFilters = selectedCategory !== 'all' || 
-    priceRange[0] > 0 || priceRange[1] < 3000 || 
-    availableOnly || featuredOnly;
 
   return (
     <ErrorBoundary>
@@ -214,7 +275,7 @@ export default function GalleryPage() {
             </div>
 
             {/* Gallery Grid */}
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0" ref={galleryRef}>
               {filteredArtworks.length > 0 ? (
                 <div className={
                   viewMode === 'grid'
@@ -222,14 +283,15 @@ export default function GalleryPage() {
                     : 'space-y-4 sm:space-y-6'
                 }>
                   {filteredArtworks.map((artwork, index) => (
-                    <ArtCard
-                      key={artwork.id}
-                      artwork={artwork}
-                      viewMode={viewMode}
-                      onExpand={setSelectedArtwork}
-                      index={index}
-                      variant="gallery"
-                    />
+                    <div key={artwork.id} data-artwork-card>
+                      <ArtCard
+                        artwork={artwork}
+                        viewMode={viewMode}
+                        onExpand={setSelectedArtwork}
+                        index={index}
+                        variant="gallery"
+                      />
+                    </div>
                   ))}
                 </div>
               ) : (
