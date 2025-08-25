@@ -3,6 +3,7 @@
 import { Inter, Playfair_Display } from 'next/font/google';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import CookieConsent from '@/components/ui/CookieConsent';
 import './globals.css';
 import { ToastProvider } from "@/components/ui/Toast";
 import ErrorBoundary from '@/components/ui/ErrorBoundary';
@@ -90,6 +91,7 @@ export default function RootLayout({
                 </main>
                 <Footer />
               </div>
+              <CookieConsent />
             </ToastProvider>
           </NavigationLoadingProvider>
         </ErrorBoundary>

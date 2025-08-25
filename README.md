@@ -4,6 +4,35 @@ A modern, visually stunning artist portfolio and e-commerce website built with N
 
 ![Moon Doggy Artist Portfolio](public/images/artworks/img1.jpg)
 
+## 🚀 Latest Updates
+
+### Error Handling & Search Improvements
+- **Enhanced Error Handling**:
+  - Implemented global ErrorBoundary component for runtime error handling
+  - Added dedicated 404 page with custom styling and "Go Back" functionality
+  - Error boundaries integrated in key components for graceful error recovery
+
+### Search System
+- **Unified Global Search**:
+  - Implemented global search functionality accessible via ⌘K shortcut
+  - Rich search results with image previews and metadata
+  - Real-time filtering and search suggestions
+  - Search across artworks, collections, and blog posts
+
+### Performance & UX
+- **Image Optimization**:
+  - Enhanced ImageWithLoading component with better error states
+  - Progressive image loading with blur placeholders
+  - Optimized image loading for gallery and shop pages
+  - Priority loading for above-the-fold images
+
+### Error States
+- **Comprehensive Error Handling**:
+  - Runtime error capture and display
+  - Network error handling
+  - Invalid route handling with custom 404 page
+  - Component-level error boundaries for isolated error handling
+
 ## 📋 Table of Contents
 
 - [Features](#-features)
@@ -21,10 +50,12 @@ A modern, visually stunning artist portfolio and e-commerce website built with N
 ## ✨ Features
 
 ### Core Features
+- **Error-Resilient Architecture**: Comprehensive error handling with ErrorBoundary and custom 404 pages
+- **Global Search System**: Unified search experience with keyboard shortcuts and rich results
 - **Artistic Design System**: Custom-designed UI components with artistic gradients, animations, and visual effects
 - **Responsive Layout**: Mobile-first design that works beautifully on all devices
 - **E-commerce Functionality**: Complete shopping cart and checkout system with local storage persistence
-- **Gallery Showcase**: Interactive gallery with filtering, search, and modal view for artwork details
+- **Gallery Showcase**: Interactive gallery with filtering, global search, and modal view for artwork details
 - **Artist Portfolio**: Comprehensive about page with exhibitions, education, and awards
 - **Gift Card System**: Custom gift card creation with personalized messages and designs
 - **Blog Section**: Artist blog with categorized posts and reading time estimates
@@ -46,6 +77,10 @@ A modern, visually stunning artist portfolio and e-commerce website built with N
   - Tailwind CSS 3.4.15
   - Custom utility classes
   - CSS variables for theming
+- **Error Handling**:
+  - React Error Boundary
+  - Custom error pages
+  - Component-level error isolation
 - **State Management**:
   - React Context API
   - Custom hooks for domain-specific state
@@ -98,6 +133,18 @@ src/
 ```
 
 ## 🧩 Components Overview
+
+### Error Handling Components
+- **ErrorBoundary**: Class component for catching and handling runtime errors
+- **NotFound**: Custom 404 page component for invalid routes
+- **ErrorFallback**: Reusable error state component with action buttons
+
+### Search Components
+- **GlobalSearch**: Universal search component with keyboard shortcuts
+- **SearchResults**: Rich search results display with image previews
+- **SearchContext**: Context provider for global search state
+
+### Core Components
 
 ### Home Page Components
 - **Hero**: Animated hero section with featured artwork slideshow

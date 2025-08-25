@@ -164,3 +164,45 @@ export interface Toast {
   message?: string;
   duration?: number;
 }
+
+// New interfaces for FAQ data
+export interface FAQItem {
+  id: string;
+  question: string;
+  answer: string;
+  category: 'general' | 'shipping' | 'returns' | 'payments' | 'artworks';
+}
+
+// New interfaces for shipping data
+export interface ShippingOption {
+  type: string;
+  time: string;
+  cost: string;
+  description: string;
+  icon: string;
+}
+
+export interface PackagingFeature {
+  title: string;
+  description: string;
+  icon: string;
+}
+
+// New interfaces for sitemap data
+export interface SiteSection {
+  section: string;
+  icon: string;
+  color: string;
+  pages: Array<{
+    name: string;
+    path: string;
+    description: string;
+  }>;
+}
+
+export interface QuickAction {
+  name: string;
+  path: string;
+  icon: string;
+  color: string;
+}
